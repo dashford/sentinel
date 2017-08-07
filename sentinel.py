@@ -16,7 +16,8 @@ device_address = '54:6C:0E:79:3C:85'
 sensor = SensorTagCC2650(logger, device, device_address)
 sensor.connect()
 
-for n in range(0, 10):
+while True:
+#for n in range(0, 10):
     submission_time = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
     temperature = sensor.get_ambient_temperature()
     humidity = sensor.get_humidity()
@@ -39,6 +40,6 @@ for n in range(0, 10):
     }
     r = requests.post("http://192.168.1.12:3001/humidities", data=payload)
     print(r.text)
-    sleep(5)
+    sleep(30)
 
 sensor.disconnect()
