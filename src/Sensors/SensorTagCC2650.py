@@ -1,10 +1,17 @@
 from src.Sensor import Sensor
 from time import sleep
+from bluepy.btle import Peripheral, BTLEException
 
 
 class SensorTagCC2650(Sensor):
 
     def __init__(self, logger, device, device_address):
+        """
+
+        :param logger:
+        :param Peripheral device:
+        :param device_address:
+        """
         Sensor.__init__(self, device, device_address)
         self._logger = logger
 

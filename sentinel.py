@@ -4,9 +4,15 @@ import logging
 import requests
 import datetime
 from src.Sensors.SensorTagCC2650 import SensorTagCC2650
+from bluepy.btle import BTLEException
 
 logger = logging.getLogger('SentinelClient')
 logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s - %(message)s')
+stdout_channel = logging.StreamHandler()
+stdout_channel.setLevel(logging.DEBUG)
+stdout_channel.setFormatter(formatter)
+logger.addHandler(stdout_channel)
 
 # TODO use device factory or pass device factory into Sensor directly
 device = btle.Peripheral(None)
@@ -17,11 +23,16 @@ sensor = SensorTagCC2650(logger, device, device_address)
 sensor.connect()
 
 while True:
-#for n in range(0, 10):
     submission_time = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
-    temperature = sensor.get_ambient_temperature()
-    humidity = sensor.get_humidity()
-    print(
+    try:
+        temperature = sensor.get_ambient_temperature()
+        humidity = sensor.get_humidity()
+    except BTLEException as e:
+        # TODO Make exception more generic
+        logger.debug('Sensor has lost connection, trying to re-connect')
+        sensor.connect()
+
+    logger.info(
         'Temperature: {temperature}; Humidity: {humidity}; Submission Time: {submission}'.format(
             temperature=temperature, humidity=humidity, submission=submission_time
         )
@@ -32,14 +43,12 @@ while True:
         'submitted_at': submission_time
     }
     r = requests.post("http://192.168.1.12:3001/temperatures", data=payload)
-    print(r.text)
+    logger.info(r.text)
     payload = {
         'sensor_id': '3560747b-e756-49f9-939e-27bfa4199173',
         'humidity': humidity,
         'submitted_at': submission_time
     }
     r = requests.post("http://192.168.1.12:3001/humidities", data=payload)
-    print(r.text)
+    logger.info(r.text)
     sleep(30)
-
-sensor.disconnect()
