@@ -6,6 +6,11 @@ import datetime
 from src.Sensors.SensorTagCC2650 import SensorTagCC2650
 from bluepy.btle import BTLEException
 from w1thermsensor import W1ThermSensor
+import paho.mqtt.client as mqtt
+from dotenv import load_dotenv, find_dotenv
+import os
+
+load_dotenv(find_dotenv())
 
 logger = logging.getLogger('SentinelClient')
 logger.setLevel(logging.DEBUG)
@@ -23,10 +28,17 @@ logger.addHandler(stdout_channel)
 # sensor = SensorTagCC2650(logger, device, device_address)
 # sensor.connect()
 
+mqtt_client = mqtt.Client(client_id="atlas")
+mqtt_client.username_pw_set(os.getenv('MQTT_USERNAME'), os.getenv('MQTT_PASSWORD'))
+mqtt_client.connect(host='192.168.1.12', port=1883)
+
 while True:
     submission_time = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
-    for sensor in W1ThermSensor.get_available_sensors():
-        print("Sensor %s has temperature %.2f" % (sensor.id, sensor.get_temperature()))
+    sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, "021583ad40ff")
+    print("Sensor has temperature %.2f" % sensor.get_temperature())
+    mqtt_client.publish(topic='test/sensor1', payload='{"temperature": %.2f}' % sensor.get_temperature())
+    # for sensor in W1ThermSensor.get_available_sensors():
+    #     print("Sensor %s has temperature %.2f" % (sensor.id, sensor.get_temperature()))
     # try:
     #     temperature = sensor.get_ambient_temperature()
     #     humidity = sensor.get_humidity()
@@ -54,4 +66,5 @@ while True:
     # }
     # r = requests.post("http://192.168.1.12:3001/humidities", data=payload)
     # logger.info(r.text)
+    print('sleeping')
     sleep(30)
