@@ -35,8 +35,12 @@ mqtt_client.connect(host='192.168.1.12', port=1883)
 while True:
     submission_time = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
     sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, "021583ad40ff")
-    print("Sensor has temperature %.2f" % sensor.get_temperature())
+    print("Sensor 1 has temperature %.2f" % sensor.get_temperature())
     mqtt_client.publish(topic='test/sensor1', payload='{"temperature": %.2f}' % sensor.get_temperature())
+
+    sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, "021583a99eff")
+    print("Sensor 2 has temperature %.2f" % sensor.get_temperature())
+    mqtt_client.publish(topic='test/sensor2', payload='{"temperature": %.2f}' % sensor.get_temperature())
     # for sensor in W1ThermSensor.get_available_sensors():
     #     print("Sensor %s has temperature %.2f" % (sensor.id, sensor.get_temperature()))
     # try:
