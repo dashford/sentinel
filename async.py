@@ -1,69 +1,119 @@
-# class Countdown(object):
-#     counter = 5
-#
-#     def count(self):
-#         if self.counter == 0:
-#             reactor.stop()
-#         else:
-#             print(self.counter, '...')
-#             self.counter -= 1
-#             reactor.callLater(1, self.count)
-#
-#
-# def hello():
-#     print('Hello from the reactor loop!')
-#     print('Lately I feel like I\'m stuck in a rut.')
-#
-#
-# from twisted.internet import reactor
-#
-# reactor.callWhenRunning(Countdown().count)
-# reactor.callWhenRunning(hello)
-#
-# print('Start!')
-# reactor.run()
-# print('Stop!')
+# import time
+# from twisted.internet import stdio, reactor, task, threads, endpoints, protocol, defer
+# from twisted.internet.endpoints import StandardIOEndpoint
+# from twisted.internet.protocol import connectionDone
+# from twisted.protocols import basic
+# from src.Sensors.SensorTagCC2650 import SensorTagCC2650
+# from bluepy import btle
+# import logging
 
 
-# from twisted.internet.task import react
-# import treq
+# class WebCheckerCommandProtocol(basic.LineReceiver):
+#     delimiter = b'\n'  # unix terminal style newlines. remove this line
 #
-# def get_url(urls):
+#     def __init__(self):
+#         self.sensor = ''
+#         self.logger = ''
 #
-#     def handle_response(resp):
-#         print("Got response code %d from %s" % (resp.code, site))
+#     def connectionMade(self):
+#         self.logger = logging.getLogger('Sentinel')
+#         self.logger.setLevel(logging.DEBUG)
+#         formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s - %(message)s')
+#         stdout_channel = logging.StreamHandler()
+#         stdout_channel.setLevel(logging.DEBUG)
+#         stdout_channel.setFormatter(formatter)
+#         self.logger.addHandler(stdout_channel)
+#         device = btle.Peripheral(None)
+#         device_address = '54:6C:0E:79:3C:85'
+#         self.sensor = SensorTagCC2650(self.logger, device, device_address)
+#         self.sensor.connect()
+#         self.check()
 #
-#     def handle_failure(failure):
-#         print("Something failed: %s" % failure.getErrorMessage())
+#     def lineReceived(self, line):
+#         pass
 #
-#     for site in urls:
-#         print("Getting URL %s" % site)
-#         d = treq.get(site)
-#         d.addCallback(handle_response)
-#         d.addErrback(handle_failure)
+#     def quit(self):
+#         """quit: Quit this session"""
+#         self.sendLine(b'Goodbye.')
+#         self.transport.loseConnection()
 #
-#     return d
+#     def check(self):
+#         humidity = 0.0
+#         d = threads.deferToThread(self.sensor.get_ambient_temperature())
+#         # a = threads.deferToThread(self.sensor.get_humidity())
+#         d.addCallback(self.david)
+#         return d
+#         # a.addCallback(self.david)
+#         # temperature = self.sensor.get_ambient_temperature()
+#         # self.logger.info('Temperature: {temperature}; Humidity: {humidity}'.format(
+#         #     temperature=temperature, humidity=humidity
+#         # ))
+#         # self.quit()
+#         # self.sendLine(b'Got temperature and humidity')
 #
-# def main(reactor, *args):
-#     urls = ['http://google.com', 'http://gmail.com']
-#     d = get_url(urls)
-#     return d
+#     def david(self, temperature):
+#         self.logger.info('Value: {temperature}'.format(
+#             temperature=temperature
+#         ))
 #
-# react(main)
+#     def connectionLost(self, reason):
+#         # stop the reactor, only because this is meant to be run in Stdio.
+#         self.sensor.disconnect()
+#         reactor.stop()
 
 
-from bluetooth import *
-
-# Create the client socket
-client_socket = BluetoothSocket(RFCOMM)
-
-client_socket.connect(("54:6C:0E:79:3C:85", 3))
-
-client_socket.send("Hello World")
-
-print("Finished")
-
-client_socket.close()
+# class SensorProtocol(basic.LineReceiver):
+#     def connectionMade(self):
+#         self.factory.logger.info('Test from connectionMade')
+#         # self.transport.write(b"Test from connectionMade\r\n")
+#         self.lineReceived('test')
+#
+#     def lineReceived(self, line):
+#         self.factory.logger.info('Test from lineReceived')
+#         # self.transport.write(b"Test from lineReceived\r\n")
+#         d = self.factory.getAmbientTemperature()
+#
+#         def onError(err):
+#             return 'Internal error in server'
+#         d.addErrback(onError)
+#
+#         def writeResponse(message):
+#             self.transport.write(message + b'\r\n')
+#             self.transport.loseConnection()
+#         d.addCallback(writeResponse)
+#
+#     def connectionLost(self, reason=connectionDone):
+#         self.factory.logger.info('Test from connectionLost')
+#         # reactor.stop()
+#
+#
+# class SensorFactory(protocol.ServerFactory):
+#     protocol = SensorProtocol
+#
+#     def __init__(self, id):
+#         self.id = id
+#         self.logger = logging.getLogger('Sentinel')
+#         self.logger.setLevel(logging.DEBUG)
+#         formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s - %(message)s')
+#         stdout_channel = logging.StreamHandler()
+#         stdout_channel.setLevel(logging.DEBUG)
+#         stdout_channel.setFormatter(formatter)
+#         self.logger.addHandler(stdout_channel)
+#         device = btle.Peripheral(None)
+#         device_address = '54:6C:0E:79:3C:85'
+#         self.logger.info('Test from __init__ {}'.format(self.id))
+#         # self.sensor = SensorTagCC2650(self.logger, device, device_address)
+#         # self.sensor.connect()
+#
+#     def getAmbientTemperature(self):
+#         self.logger.info('called getAmbientTemperature from {}'.format(self.id))
+#         return defer.succeed(b"Text from deferTest\r\n")
+#
+#
+# if __name__ == "__main__":
+#     endpoint = StandardIOEndpoint(reactor=reactor)
+#     endpoint.listen(SensorFactory(id=1))
+#     reactor.run()
 
 
 
@@ -89,3 +139,117 @@ client_socket.close()
 
 # endpoint persistent client connections
 # - http://twistedmatrix.com/documents/current/core/howto/endpoints.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from twisted.application.internet import ClientService, backoffPolicy
+from twisted.internet import reactor, protocol, endpoints
+import logging
+from twisted.protocols import basic
+from twisted.internet.protocol import connectionDone, Protocol, ReconnectingClientFactory
+from twisted.internet.endpoints import StandardIOEndpoint, ProcessEndpoint, TCP4ServerEndpoint
+
+
+class BluetoothService(ClientService):
+    def __init__(self, endpoint, factory):
+        ClientService.__init__(self, endpoint, factory, retryPolicy=backoffPolicy(initialDelay=5.0))
+
+    def startService(self):
+        print('startService called')
+        ClientService.startService(self)
+
+    def stopService(self):
+        print('stopService called')
+
+    def whenConnected(self, failAfterFailures=None):
+        print('whenConnected called')
+
+
+class SensorProtocol(Protocol):
+    def __init__(self, factory):
+        self.factory = factory
+        print('SensorProtocol __init__ called')
+        # As mentioned above, this, along with auxiliary classes and functions,
+        # is where most of the code is.
+
+    def connectionMade(self):
+        # The connectionMade event is usually where setup of the connection object
+        # happens.
+        print('Test from connectionMade')
+        print('some_state is currently {}'.format(self.factory.some_state))
+        self.factory.some_state = self.factory.some_state + 1
+        # self.transport.loseConnection()
+
+    def dataReceived(self, data):
+        print('dataReceived called')
+
+    def connectionLost(self, reason=connectionDone):
+        # The connectionLost event is where tearing down of any connection-specific
+        # objects is done.
+        print('Test from connectionLost')
+        # self.factory.some_state = self.factory.some_state - 1
+
+    def getAmbientTemperature(self):
+        print('called getAmbientTemperature')
+
+
+class SensorFactory(protocol.Factory):
+    some_state = 0
+
+    # find way to populate these automatically
+    mac_addresses = [
+        '54:6C:0E:79:3C:85'
+    ]
+
+    def __init__(self):
+        print('SensorFactory __init__ called')
+        # The factory is used to share state that exists beyond the lifetime of any given connection
+        # The persistent configuration is kept in a Factory class
+
+    def startedConnecting(self, connector):
+        print('Started to connect.')
+
+    def buildProtocol(self, addr):
+        print('Connected.')
+        # print('Resetting reconnection delay')
+        # self.resetDelay()
+        return SensorProtocol(self)
+
+    def startFactory(self):
+        print('startFactory called')
+
+    def stopFactory(self):
+        print('stopFactory called')
+
+
+
+if __name__ == "__main__":
+    # client
+    # reactor.connectTCP('localhost', 8007, SensorFactory())
+    # reactor.run()
+
+    # server
+    # endpoint = TCP4ServerEndpoint(reactor, 8007)
+    # endpoint.listen(SensorFactory())
+    # reactor.run()
+
+    endpoint = ProcessEndpoint(reactor=reactor, executable=None)
+    factory = SensorFactory()
+    service = BluetoothService(endpoint, factory)
+    service.startService()
+    reactor.run()
+
+# python async.py and curl localhost:8007
+# run server for each sensor?
+# run one client that queries servers periodically

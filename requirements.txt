@@ -1,4 +1,5 @@
 bluepy==1.1.0
 requests==2.18.1
-twisted==17.5.0
+twisted==17.9.0
 treq==17.8.0
+w1thermsensor==1.0.5
