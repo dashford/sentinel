@@ -250,6 +250,6 @@ if __name__ == "__main__":
     service.startService()
     reactor.run()
 
-# python async.py and curl localhost:8007
+# python zasync.py and curl localhost:8007
 # run server for each sensor?
 # run one client that queries servers periodically

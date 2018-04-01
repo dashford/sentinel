@@ -1,5 +1,7 @@
 class Sensor:
 
+    UNIT_CELSIUS = 'celsius'
+
     def __init__(self, device, device_address):
         self._device = device
         self._device_address = device_address

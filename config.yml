@@ -1,0 +1,15 @@
+sensors:
+  - type: DS18B20
+    id: 021583ad40ff
+
+  - type: bme680
+    id: test-id
+    capabilities:
+      temperature:
+        poll: 5
+      humidity:
+        poll: 5
+      pressure:
+        poll: 5
+      air-quality:
+        poll: 60

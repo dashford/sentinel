@@ -1,6 +1,6 @@
-from src.Sensor import Sensor
+from src.Sensors.Sensor import Sensor
 from time import sleep
-from bluepy.btle import Peripheral, BTLEException
+from bluepy.btle import Peripheral
 
 
 class SensorTagCC2650(Sensor):
