@@ -1,5 +1,6 @@
 import bme680
 import time
+import json
 
 
 class BME680:
@@ -21,6 +22,8 @@ class BME680:
             time.sleep(0.5)
 
         # TODO formalise this into object
-        message = '{"temperature": {0:.2f}}'.format(temperature)
+        message = {
+            "temperature": temperature
+        }
 
-        mqtt_client.publish(mqtt_details['topic'], message)
+        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
