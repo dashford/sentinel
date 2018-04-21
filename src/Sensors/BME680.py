@@ -21,6 +21,6 @@ class BME680:
             time.sleep(0.5)
 
         # TODO formalise this into object
-        message = '{"temperature": {0:.2f}}'
+        message = '{"temperature": {0:.2f}}'.format(temperature)
 
-        mqtt_client.publish(mqtt_details['topic'], temperature)
+        mqtt_client.publish(mqtt_details['topic'], message)
