@@ -20,6 +20,12 @@ class Paho:
         logging.info('Publishing message to topic {}'.format(topic))
         self._client.publish(topic=topic, payload=payload, qos=qos, retain=retain)
 
+    def loop_start(self):
+        self._client.loop_start()
+
+    def loop_stop(self):
+        self._client.loop_stop()
+
     def _on_connect(self, client, userdata, flags, rc):
         logging.info('Connected with result code {}'.format(rc))
 
