@@ -13,10 +13,14 @@ class BME680:
     def get_temperature(self, mqtt_client, event_dispatcher, mqtt_details):
         pending_measurement = True
         temperature = None
+
         while pending_measurement:
             if self._sensor.get_sensor_data():
                 temperature = self._sensor.data.temperature
                 pending_measurement = False
             time.sleep(0.5)
+
+        # TODO formalise this into object
+        message = '{"temperature": {0:.2f}}'
 
         mqtt_client.publish(mqtt_details['topic'], temperature)
