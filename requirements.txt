@@ -4,3 +4,4 @@ python-dotenv==0.8.1
 Adafruit-BME280==1.0.1
 PyYAML==3.12
 APScheduler==3.5.1
+bme680==1.0.4
