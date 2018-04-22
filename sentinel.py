@@ -38,6 +38,20 @@ if __name__ == '__main__':
                     seconds=metric['poll'],
                     args=[mqtt_client, event_dispatcher, metric['mqtt']]
                 )
+            elif metric['metric'] == 'humidity':
+                scheduler.add_job(
+                    device.get_humidity,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                )
+            elif metric['metric'] == 'pressure':
+                scheduler.add_job(
+                    device.get_pressure,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                )
 
     mqtt_client.loop_start()
     scheduler.start()

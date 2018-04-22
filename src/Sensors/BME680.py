@@ -27,3 +27,37 @@ class BME680:
         }
 
         mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+
+    def get_humidity(self, mqtt_client, event_dispatcher, mqtt_details):
+        pending_measurement = True
+        humidity = None
+
+        while pending_measurement:
+            if self._sensor.get_sensor_data():
+                humidity = self._sensor.data.humidity
+                pending_measurement = False
+            time.sleep(0.5)
+
+        # TODO formalise this into object
+        message = {
+            "humidity": humidity
+        }
+
+        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+
+    def get_pressure(self, mqtt_client, event_dispatcher, mqtt_details):
+        pending_measurement = True
+        pressure = None
+
+        while pending_measurement:
+            if self._sensor.get_sensor_data():
+                pressure = self._sensor.data.pressure
+                pending_measurement = False
+            time.sleep(0.5)
+
+        # TODO formalise this into object
+        message = {
+            "pressure": pressure
+        }
+
+        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
