@@ -2,6 +2,9 @@ import bme680
 import time
 import json
 
+from src.Event.EventDispatcher import EventDispatcher
+from src.Event.Events.TemperatureEvent import TemperatureEvent
+
 
 class BME680:
     def __init__(self):
@@ -12,6 +15,14 @@ class BME680:
         self._sensor.set_filter(bme680.FILTER_SIZE_3)
 
     def get_temperature(self, mqtt_client, event_dispatcher, mqtt_details):
+        """
+        Return the temperature.
+
+        :param mqtt_client:
+        :param EventDispatcher event_dispatcher:
+        :param dict mqtt_details: Details of MQTT specifics from user configuration
+        :return:
+        """
         pending_measurement = True
         temperature = None
 
@@ -27,6 +38,9 @@ class BME680:
         }
 
         mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+
+        event = TemperatureEvent(event_details=message)
+        event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVE, event=event)
 
     def get_humidity(self, mqtt_client, event_dispatcher, mqtt_details):
         pending_measurement = True

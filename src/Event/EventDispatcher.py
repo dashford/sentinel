@@ -1,4 +1,7 @@
 class EventDispatcher:
+
+    TEMPERATURE_SAVE = 'temperature.saved'
+
     def __init__(self):
         self._subscribers = []
 
