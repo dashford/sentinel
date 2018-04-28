@@ -4,6 +4,8 @@ import json
 
 from src.Event.EventDispatcher import EventDispatcher
 from src.Event.Events.TemperatureEvent import TemperatureEvent
+from src.MQTT.Message.Message import Message
+from src.MQTT.Message.Formatters.JsonFormatter import JsonFormatter
 
 
 class BME680:
@@ -32,12 +34,11 @@ class BME680:
                 pending_measurement = False
             time.sleep(0.5)
 
-        # TODO formalise this into object
-        message = {
-            "temperature": temperature
-        }
+        message = Message()
+        message_formatter = JsonFormatter()
+        message.add_key_value(key='temperature', value=temperature)
 
-        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+        mqtt_client.publish(mqtt_details['topic'], message_formatter.format(message=message))
 
         event = TemperatureEvent(event_details=message)
         event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
