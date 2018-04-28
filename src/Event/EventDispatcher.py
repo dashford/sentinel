@@ -1,6 +1,9 @@
 class EventDispatcher:
 
-    TEMPERATURE_SAVE = 'temperature.saved'
+    TEMPERATURE_SAVED = 'temperature.saved'
+    HUMIDITY_SAVED = 'humidity.saved'
+    PRESSURE_SAVED = 'pressure.saved'
+    AIR_QUALITY_SAVED = 'air_quality.saved'
 
     def __init__(self):
         self._subscribers = []

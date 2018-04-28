@@ -40,7 +40,7 @@ class BME680:
         mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
 
         event = TemperatureEvent(event_details=message)
-        event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVE, event=event)
+        event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
 
     def get_humidity(self, mqtt_client, event_dispatcher, mqtt_details):
         pending_measurement = True

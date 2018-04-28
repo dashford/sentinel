@@ -2,13 +2,13 @@ from src.Event.EventDispatcher import EventDispatcher
 from src.Event.Subscriber.Subscriber import Subscriber
 
 
-class TemperatureSubscriber(Subscriber):
+class PressureSubscriber(Subscriber):
     def __init__(self):
         pass
 
     def get_subscribed_events(self):
         return [
-            EventDispatcher.TEMPERATURE_SAVED
+            EventDispatcher.PRESSURE_SAVED
         ]
 
     def notify(self, event):
