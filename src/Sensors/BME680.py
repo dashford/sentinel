@@ -38,7 +38,7 @@ class BME680:
         message_formatter = JsonFormatter()
         message.add_key_value(key='temperature', value=temperature)
 
-        mqtt_client.publish(mqtt_details['topic'], message_formatter.format(message=message))
+        mqtt_client.publish(mqtt_details['topic'], message_formatter.format(message=message.get_message()))
 
         event = TemperatureEvent(event_details=message)
         event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
