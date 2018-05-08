@@ -76,3 +76,56 @@ class BME680:
         }
 
         mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+
+    def get_air_quality(self, mqtt_client, event_dispatcher, mqtt_details):
+        self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
+        self._sensor.set_gas_heater_temperature(320)
+        self._sensor.set_gas_heater_duration(150)
+        self._sensor.select_gas_heater_profile(0)
+
+        start_time = time.time()
+        current_time = time.time()
+        burn_in_time = 300
+        burn_in_data = []
+
+        while current_time - start_time < burn_in_time:
+            current_time = time.time()
+            if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
+                gas = self._sensor.data.gas_resistance
+                burn_in_data.append(gas)
+                time.sleep(1)
+
+        gas_baseline = sum(burn_in_data[-50:]) / 50.0
+        hum_baseline = 40.0
+        hum_weighting = 0.25
+
+        if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
+            gas = self._sensor.data.gas_resistance
+            gas_offset = gas_baseline - gas
+
+            hum = self._sensor.data.humidity
+            hum_offset = hum - hum_baseline
+
+            # Calculate hum_score as the distance from the hum_baseline.
+            if hum_offset > 0:
+                hum_score = (100 - hum_baseline - hum_offset) / (100 - hum_baseline) * (hum_weighting * 100)
+            else:
+                hum_score = (hum_baseline + hum_offset) / hum_baseline * (hum_weighting * 100)
+
+            # Calculate gas_score as the distance from the gas_baseline.
+            if gas_offset > 0:
+                gas_score = (gas / gas_baseline) * (100 - (hum_weighting * 100))
+            else:
+                gas_score = 100 - (hum_weighting * 100)
+
+            # Calculate air_quality_score.
+            air_quality = hum_score + gas_score
+
+            # TODO formalise this into object
+            message = {
+                "air_quality": air_quality
+            }
+
+            mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+
+        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
