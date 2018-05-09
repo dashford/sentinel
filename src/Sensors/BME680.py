@@ -85,7 +85,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        burn_in_time = 300
+        burn_in_time = 60
         burn_in_data = []
 
         while current_time - start_time < burn_in_time:
