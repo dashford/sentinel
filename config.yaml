@@ -15,7 +15,7 @@ sensors:
         mqtt:
           topic: brompton/living-room/pressure
       - metric: air_quality
-        poll: 90
+        poll: 900
         mqtt:
           topic: brompton/living-room/air_quality
 
