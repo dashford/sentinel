@@ -3,9 +3,8 @@ import RPi.GPIO as GPIO
 
 class RGB:
     def __init__(self, configuration):
-        # TODO: testing only
-        #       Multiple LEDs will be connected to one pi so will need to take
-        #       these values from config.
+        print(configuration)
+        # TODO: don't use indices here
         self._R = configuration['channels'][0]
         self._G = configuration['channels'][1]
         self._B = configuration['channels'][2]
