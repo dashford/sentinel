@@ -17,7 +17,7 @@ class TemperatureSubscriber(Subscriber):
 
     def notify(self, event):
         pass
-        self._signal_led(event=event)
+        #self._signal_led(event=event)
 
     def _signal_led(self, event):
         print('_signal_led called. event received: {}'.format(event.get_event()))
