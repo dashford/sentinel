@@ -19,6 +19,14 @@ sensors:
 #        mqtt:
 #          topic: brompton/living-room/air_quality
 
+leds:
+  - type: rgb
+    id: 1
+    channels:
+      - r: 23
+        g: 24
+        b: 25
+
 #  - type: BME280
 #    id: 1
 #    metrics:

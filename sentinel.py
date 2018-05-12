@@ -19,9 +19,11 @@ if __name__ == '__main__':
     with open('config.yaml') as fp:
         configuration = yaml.load(fp)
 
-    event_dispatcher = EventDispatcher()
+    for led in configuration['leds']:
+        led_device = Device_Factory.create_led(device=led['type'], configuration=led)
 
-    event_dispatcher.add_subscriber(subscriber=TemperatureSubscriber())
+    event_dispatcher = EventDispatcher()
+    event_dispatcher.add_subscriber(subscriber=TemperatureSubscriber(led=led_device))
     event_dispatcher.add_subscriber(subscriber=HumiditySubscriber())
     event_dispatcher.add_subscriber(subscriber=PressureSubscriber())
     event_dispatcher.add_subscriber(subscriber=AirQualitySubscriber())

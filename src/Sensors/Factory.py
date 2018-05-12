@@ -1,5 +1,6 @@
 from src.Sensors.BME280 import BME280
 from src.Sensors.BME680 import BME680
+from src.Notifications.LED.RGB import RGB
 
 
 class Factory:
@@ -10,3 +11,8 @@ class Factory:
             return BME280()
         elif device == 'BME680':
             return BME680()
+
+    @staticmethod
+    def create_led(device, configuration):
+        if device == 'rgb':
+            return RGB(configuration=configuration)
