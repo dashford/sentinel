@@ -6,9 +6,9 @@ class RGB:
         # TODO: testing only
         #       Multiple LEDs will be connected to one pi so will need to take
         #       these values from config.
-        self._R = configuration['channels']['r']
-        self._G = configuration['channels']['g']
-        self._B = configuration['channels']['b']
+        self._R = configuration['channels'][0]
+        self._G = configuration['channels'][1]
+        self._B = configuration['channels'][2]
         pins = [
             self._R,
             self._G,
