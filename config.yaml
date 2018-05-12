@@ -4,6 +4,9 @@ sensors:
     metrics:
       - metric: temperature
         poll: 20
+        notification:
+          device_id: 1 # ID of matching device
+          colour: green
         mqtt:
           topic: brompton/living-room/temperature
       - metric: humidity
