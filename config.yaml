@@ -3,7 +3,7 @@ sensors:
     id: 1
     metrics:
       - metric: temperature
-        poll: 5
+        poll: 20
         mqtt:
           topic: brompton/living-room/temperature
       - metric: humidity
@@ -28,6 +28,7 @@ leds:
     mqtt:
       topics:
         - topic: brompton/living-room/temperature
+        - topic: brompton/living-room/humidity
 
 #  - type: BME280
 #    id: 1
