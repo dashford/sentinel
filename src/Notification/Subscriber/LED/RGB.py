@@ -25,6 +25,9 @@ class RGB:
         for i in range(0, 100):
             led.ChangeDutyCycle(i)
             time.sleep(0.02)
+        for i in range(100, 0, -1):
+            led.ChangeDutyCycle(i)
+            time.sleep(0.02)
         led.stop()
 
 
