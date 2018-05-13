@@ -37,6 +37,7 @@ class BME680:
         message = Message()
         message_formatter = JsonFormatter()
         message.add_key_value(key='temperature', value=temperature)
+        message.add_key_value(key='success', value=True)
 
         mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
 

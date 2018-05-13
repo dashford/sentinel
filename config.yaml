@@ -28,7 +28,6 @@ leds:
     mqtt:
       topics:
         - topic: brompton/living-room/temperature
-          colour: green
 
 #  - type: BME280
 #    id: 1

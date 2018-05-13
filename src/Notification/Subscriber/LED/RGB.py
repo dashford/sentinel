@@ -19,12 +19,10 @@ class RGB:
         GPIO.setup(pins, GPIO.OUT, initial=GPIO.LOW)
 
     def blink(self, mosq, obj, msg):
-        print(mosq)
-        print(obj)
-        print(msg)
-        GPIO.output(self._R, GPIO.HIGH)
+        # print(msg.payload)
+        GPIO.output(self._G, GPIO.HIGH)
         time.sleep(1)
-        GPIO.output(self._R, GPIO.LOW)
+        GPIO.output(self._G, GPIO.LOW)
 
     # def red(self):
     #     return self._R
