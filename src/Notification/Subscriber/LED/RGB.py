@@ -21,7 +21,7 @@ class RGB:
     def blink(self, mosq, obj, msg):
         print(msg.payload)
         GPIO.output(self._G, GPIO.HIGH)
-        time.sleep(1)
+        time.sleep(2)
         GPIO.output(self._G, GPIO.LOW)
 
     # def red(self):

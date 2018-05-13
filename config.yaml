@@ -29,6 +29,7 @@ leds:
       topics:
         - topic: brompton/living-room/temperature
         - topic: brompton/living-room/humidity
+        - topic: brompton/living-room/pressure
 
 #  - type: BME280
 #    id: 1
