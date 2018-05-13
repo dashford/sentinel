@@ -24,10 +24,10 @@ class RGB:
         led.start(0)
         for i in range(0, 100):
             led.ChangeDutyCycle(i)
-            time.sleep(0.01)
+            time.sleep(0.005)
         for i in range(100, 0, -1):
             led.ChangeDutyCycle(i)
-            time.sleep(0.01)
+            time.sleep(0.005)
         led.stop()
 
 
