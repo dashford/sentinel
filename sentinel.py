@@ -32,9 +32,8 @@ if __name__ == '__main__':
     for led in configuration['leds']:
         led_device = Device_Factory.create_led(device=led['type'], configuration=led)
         for topic in led['mqtt']['topics']:
-            print(topic)
             mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.blink)
-    mqtt_client.subscribe(topic='brompton/living-room')
+    mqtt_client.subscribe(topic='brompton/living-room/*')
 
     scheduler = BackgroundScheduler()
 

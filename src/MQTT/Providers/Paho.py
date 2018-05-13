@@ -10,6 +10,7 @@ class Paho:
         self._client.on_connect = self._on_connect
         self._client.on_disconnect = self._on_disconnect
         self._client.on_publish = self._on_publish
+        self._client.on_subscribe = self._on_subscribe
 
     def connect(self, host, port=1883, keepalive=60, bind_address=""):
         logging.info('Connecting to broker on {}:{}'.format(host, port))
@@ -44,3 +45,6 @@ class Paho:
 
     def _on_publish(self, client, userdata, mid):
         logging.info('Message with ID {} published'.format(mid))
+
+    def _on_subscribe(self, client, userdata, mid, granted_qos):
+        print('_on_subscribe called')
