@@ -23,8 +23,8 @@ leds:
     id: 1
     channels:
       r: 23
-      g: 24
-      b: 25
+      g: 25
+      b: 24
     mqtt:
       topics:
         - topic: brompton/living-room/temperature
