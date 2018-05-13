@@ -20,9 +20,17 @@ class RGB:
 
     def blink(self, mosq, obj, msg):
         print(msg.payload)
-        GPIO.output(self._G, GPIO.HIGH)
-        time.sleep(2)
-        GPIO.output(self._G, GPIO.LOW)
+        led = GPIO.PWM(self._G, 100)
+        led.start(0)
+        for i in range(0, 100):
+            led.changeDutyCycle(i)
+            time.sleep(0.02)
+        led.stop()
+
+
+        # GPIO.output(self._G, GPIO.HIGH)
+        # time.sleep(2)
+        # GPIO.output(self._G, GPIO.LOW)
 
     # def red(self):
     #     return self._R
