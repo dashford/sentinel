@@ -18,7 +18,7 @@ class RGB:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(pins, GPIO.OUT, initial=GPIO.LOW)
 
-    def blink(self):
+    def blink(self, mosq, obj, msg):
         print('blink called')
         GPIO.output(self._R, GPIO.HIGH)
         time.sleep(1)
