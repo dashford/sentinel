@@ -4,9 +4,6 @@ sensors:
     metrics:
       - metric: temperature
         poll: 20
-        notification:
-          device_id: 1 # ID of matching device
-          colour: green
         mqtt:
           topic: brompton/living-room/temperature
       - metric: humidity
@@ -21,14 +18,17 @@ sensors:
 #        poll: 900
 #        mqtt:
 #          topic: brompton/living-room/air_quality
-
 leds:
   - type: rgb
     id: 1
     channels:
-      - r: 23
-        g: 24
-        b: 25
+      r: 23
+      g: 24
+      b: 25
+    mqtt:
+      topics:
+        - topic: brompton/living-room/temperature
+          colour: green
 
 #  - type: BME280
 #    id: 1

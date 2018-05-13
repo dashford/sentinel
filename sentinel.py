@@ -19,11 +19,8 @@ if __name__ == '__main__':
     with open('config.yaml') as fp:
         configuration = yaml.load(fp)
 
-    for led in configuration['leds']:
-        led_device = Device_Factory.create_led(device=led['type'], configuration=led)
-
     event_dispatcher = EventDispatcher()
-    event_dispatcher.add_subscriber(subscriber=TemperatureSubscriber(led=led_device))
+    event_dispatcher.add_subscriber(subscriber=TemperatureSubscriber())
     event_dispatcher.add_subscriber(subscriber=HumiditySubscriber())
     event_dispatcher.add_subscriber(subscriber=PressureSubscriber())
     event_dispatcher.add_subscriber(subscriber=AirQualitySubscriber())
@@ -31,6 +28,12 @@ if __name__ == '__main__':
     mqtt_credentials = Credentials(username=os.getenv('MQTT_USERNAME'), password=os.getenv('MQTT_PASSWORD'))
     mqtt_client = Factory.create_client(provider=os.getenv('MQTT_PROVIDER'), credentials=mqtt_credentials)
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
+
+    for led in configuration['leds']:
+        led_device = Device_Factory.create_led(device=led['type'], configuration=led)
+        for topic in led['mqtt']['topics']:
+            mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.blink())
+    mqtt_client.subscribe(topic='brompton/living-room')
 
     scheduler = BackgroundScheduler()
 
@@ -43,7 +46,7 @@ if __name__ == '__main__':
                     device.get_temperature,
                     'interval',
                     seconds=metric['poll'],
-                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                    args=[mqtt_client, event_dispatcher, metric]
                 )
             elif metric['metric'] == 'humidity':
                 scheduler.add_job(

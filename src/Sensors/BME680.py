@@ -16,13 +16,13 @@ class BME680:
         self._sensor.set_temperature_oversample(bme680.OS_8X)
         self._sensor.set_filter(bme680.FILTER_SIZE_3)
 
-    def get_temperature(self, mqtt_client, event_dispatcher, mqtt_details):
+    def get_temperature(self, mqtt_client, event_dispatcher, metric_details):
         """
         Return the temperature.
 
         :param mqtt_client:
         :param EventDispatcher event_dispatcher:
-        :param dict mqtt_details: Details of MQTT specifics from user configuration
+        :param dict metric_details: Details of the metric from user configuration
         :return:
         """
         pending_measurement = True
@@ -38,7 +38,7 @@ class BME680:
         message_formatter = JsonFormatter()
         message.add_key_value(key='temperature', value=temperature)
 
-        mqtt_client.publish(mqtt_details['topic'], message_formatter.format(message=message.get_message()))
+        mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
 
         event = TemperatureEvent(event_details=message)
         event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)

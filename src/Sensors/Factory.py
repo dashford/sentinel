@@ -1,6 +1,6 @@
 from src.Sensors.BME280 import BME280
 from src.Sensors.BME680 import BME680
-from src.Notifications.LED.RGB import RGB
+from src.Notification.Subscriber.LED.RGB import RGB
 
 
 class Factory:

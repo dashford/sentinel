@@ -3,7 +3,6 @@ import logging
 
 
 class Paho:
-
     def __init__(self, client_id, credentials=None):
         self._client = paho.Client(client_id=client_id)
         if credentials:
@@ -19,6 +18,14 @@ class Paho:
     def publish(self, topic, payload=None, qos=0, retain=False):
         logging.info('Publishing message to topic {}'.format(topic))
         self._client.publish(topic=topic, payload=payload, qos=qos, retain=retain)
+
+    def subscribe(self, topic, qos=0):
+        logging.info('Subscribing to topic {}'.format(topic))
+        self._client.subscribe(topic=topic, qos=qos)
+
+    def message_callback_add(self, subscription, callback):
+        logging.info('Adding callback for subscription {}'.format(subscription))
+        self._client.message_callback_add(sub=subscription, callback=callback)
 
     def loop_start(self):
         self._client.loop_start()
