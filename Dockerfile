@@ -1,9 +1,11 @@
 FROM arm32v7/python:3.6.5-jessie
 
+WORKDIR /usr/src/app
+
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-ADD . ./
+COPY . .
 
-CMD ["python", "sentinel.py"]
+CMD ["python", "./sentinel.py"]
