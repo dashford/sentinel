@@ -1,22 +1,9 @@
-FROM python:3.6-alpine
-
-RUN apk --update add \
-    curl \
-    make \
-    gcc \
-    glib-dev \
-    musl-dev \
-    bluez \
-    git
+FROM arm32v7/python:3.6.5-jessie
 
 COPY requirements.txt ./
 
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
-# TODO Remove once https://github.com/IanHarvey/bluepy/issues/158 is solved
-WORKDIR /usr/local/lib/python3.6/site-packages/bluepy
-RUN make bluepy-helper
-
-WORKDIR /home/sentinel
+ADD . ./
 
 CMD ["python", "sentinel.py"]
