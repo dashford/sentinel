@@ -13,6 +13,7 @@ from src.Event.Subscriber.AirQualitySubscriber import AirQualitySubscriber
 from src.MQTT.Factory import Factory
 from src.Sensors.Factory import Factory as Device_Factory
 from src.Values.Credentials import Credentials
+from src.Notification.NotificationManager import NotificationManager
 
 if __name__ == '__main__':
     load_dotenv(find_dotenv())
@@ -30,9 +31,13 @@ if __name__ == '__main__':
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
 
     for led in configuration['leds']:
-        led_device = Device_Factory.create_led(device=led['type'], configuration=led)
+        led_device = Device_Factory.create_led(
+            device=led['type'],
+            configuration=led,
+            notification_manager=NotificationManager(configuration=led['notifications'])
+        )
         for topic in led['mqtt']['topics']:
-            mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.blink)
+            mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.notify)
 
     # mqtt_client.subscribe(topic='brompton/living-room/#')
 

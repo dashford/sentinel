@@ -13,6 +13,6 @@ class Factory:
             return BME680()
 
     @staticmethod
-    def create_led(device, configuration):
+    def create_led(device, configuration, notification_manager):
         if device == 'rgb':
-            return RGB(configuration=configuration)
+            return RGB(configuration=configuration, notification_manager=notification_manager)

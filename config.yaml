@@ -25,11 +25,31 @@ leds:
       r: 23
       g: 25
       b: 24
+    notifications:
+      allow:
+        - sunrise
+      deny:
+        - sunset
     mqtt:
       topics:
         - topic: brompton/living-room/temperature
+          color:
+            red: 0
+            green: 255
+            blue: 0
+          type: pulse
         - topic: brompton/living-room/humidity
+          color:
+            red: 0
+            green: 255
+            blue: 0
+          type: pulse
         - topic: brompton/living-room/pressure
+          color:
+            red: 255
+            green: 215
+            blue: 0
+          type: blink
 
 #  - type: BME280
 #    id: 1
