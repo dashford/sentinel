@@ -49,11 +49,6 @@ class RGB(MQTTSubscriber):
                 'red': 0,
                 'green': 0,
                 'blue': 255
-            },
-            'yellow': {
-                'red': 255,
-                'green': 215,
-                'blue': 0
             }
         }
 
@@ -61,6 +56,9 @@ class RGB(MQTTSubscriber):
         GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
 
     def notify(self, mosq, obj, msg):
+        if self._notification_manager.is_satisfied() is False:
+            raise Exception('NotificationManager not satisfied based on current conditions')
+
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE
 
@@ -79,8 +77,8 @@ class RGB(MQTTSubscriber):
 
         if style == 'pulse':
             self._pulse(channel=self._map_rgb_to_single_channel(rgb=rgb))
-        elif style == 'blink':
-            self._blink(rgb=self._map_rgb_to_percentages(rgb=rgb))
+        elif style == 'flash':
+            self._flash(rgb=self._map_rgb_to_percentages(rgb=rgb))
 
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
         p = GPIO.PWM(channel, frequency)
@@ -93,7 +91,7 @@ class RGB(MQTTSubscriber):
             time.sleep(speed)
         p.stop()
 
-    def _blink(self, rgb, frequency=100, duration=1):
+    def _flash(self, rgb, frequency=100, duration=1):
         red = GPIO.PWM(self._R, frequency)
         green = GPIO.PWM(self._G, frequency)
         blue = GPIO.PWM(self._B, frequency)
