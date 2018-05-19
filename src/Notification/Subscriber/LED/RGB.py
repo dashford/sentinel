@@ -76,8 +76,10 @@ class RGB(MQTTSubscriber):
             raise Exception('colour must be one of {}'.format(self._valid_pulse_colours))
 
         if style == 'pulse':
+            print('calling pulse')
             self._pulse(channel=self._map_rgb_to_single_channel(rgb=rgb))
         elif style == 'flash':
+            print('calling flash')
             self._flash(rgb=self._map_rgb_to_percentages(rgb=rgb))
 
         time.sleep(0.5)
