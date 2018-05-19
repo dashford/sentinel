@@ -7,3 +7,4 @@ APScheduler==3.5.1
 bme680==1.0.4
 RPi.GPIO==0.6.3
 astral==1.2
+git+https://github.com/palto42/SunriseSunsetCalculator.git
