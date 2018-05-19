@@ -63,9 +63,9 @@ class RGB(MQTTSubscriber):
         style = self.DEFAULT_STYLE
 
         print('here')
-        print(topic)
 
         for topic in self._topics:
+            print(topic)
             if topic['topic'] == msg.topic and 'colour' in topic:
                 rgb = {
                     'red': topic['colour']['red'],
@@ -74,6 +74,9 @@ class RGB(MQTTSubscriber):
                 }
             if topic['topic'] == msg.topic and 'style' in topic:
                 style = topic['style']
+
+        print(style)
+        print(rgb)
 
         if style == 'pulse' and rgb not in self._valid_pulse_colours:
             raise Exception('colour must be one of {}'.format(self._valid_pulse_colours))
