@@ -102,25 +102,35 @@ class RGB(MQTTSubscriber):
         self._clean_up()
 
     def _flash(self, rgb, frequency=100, duration=0.1):
-        self._initialise_gpio()
-        red = GPIO.PWM(self._R, frequency)
-        green = GPIO.PWM(self._G, frequency)
-        blue = GPIO.PWM(self._B, frequency)
+        try:
+            self._initialise_gpio()
+            print('_flash setting PWM')
+            red = GPIO.PWM(self._R, frequency)
+            green = GPIO.PWM(self._G, frequency)
+            blue = GPIO.PWM(self._B, frequency)
 
-        red.start(0)
-        green.start(0)
-        blue.start(0)
+            print('_flash start 0')
+            red.start(0)
+            green.start(0)
+            blue.start(0)
 
-        red.ChangeDutyCycle(rgb['red'])
-        green.ChangeDutyCycle(rgb['green'])
-        blue.ChangeDutyCycle(rgb['blue'])
+            print('_flash changedutycycle')
+            red.ChangeDutyCycle(rgb['red'])
+            green.ChangeDutyCycle(rgb['green'])
+            blue.ChangeDutyCycle(rgb['blue'])
 
-        time.sleep(duration)
+            print('_flash sleep')
+            time.sleep(duration)
 
-        red.stop()
-        green.stop()
-        blue.stop()
-        self._clean_up()
+            print('_flash stop')
+            red.stop()
+            green.stop()
+            blue.stop()
+        except Exception as e:
+            print(e)
+        finally:
+            print('_flash clean up')
+            self._clean_up()
 
     def _map_rgb_to_single_channel(self, rgb):
         for component in rgb:
