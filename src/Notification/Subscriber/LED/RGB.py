@@ -93,7 +93,7 @@ class RGB(MQTTSubscriber):
             time.sleep(speed)
         p.stop()
 
-    def _flash(self, rgb, frequency=100, duration=0.25):
+    def _flash(self, rgb, frequency=100, duration=0.1):
         red = GPIO.PWM(self._R, frequency)
         green = GPIO.PWM(self._G, frequency)
         blue = GPIO.PWM(self._B, frequency)
