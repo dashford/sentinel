@@ -62,6 +62,9 @@ class RGB(MQTTSubscriber):
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE
 
+        print('here')
+        print(topic)
+
         for topic in self._topics:
             if topic['topic'] == msg.topic and 'colour' in topic:
                 rgb = {
