@@ -11,7 +11,7 @@ class RGB(MQTTSubscriber):
     BLUE = 'blue'
 
     DEFAULT_COLOUR = GREEN
-    DEFAULT_STYLE = 'blink'
+    DEFAULT_STYLE = 'flash'
 
     def __init__(self, configuration, notification_manager):
         self._notification_manager = notification_manager
@@ -87,6 +87,7 @@ class RGB(MQTTSubscriber):
             self._flash(rgb=self._map_rgb_to_percentages(rgb=rgb))
 
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
+        print('pulse called')
         p = GPIO.PWM(channel, frequency)
         p.start(0)
         for duty_cycle in range(0, 100, step):
@@ -98,6 +99,7 @@ class RGB(MQTTSubscriber):
         p.stop()
 
     def _flash(self, rgb, frequency=100, duration=1):
+        print('flash called')
         red = GPIO.PWM(self._R, frequency)
         green = GPIO.PWM(self._G, frequency)
         blue = GPIO.PWM(self._B, frequency)
