@@ -52,8 +52,6 @@ class RGB(MQTTSubscriber):
             self._rgb_colours['blue']
         ]
 
-        GPIO.setmode(GPIO.BCM)
-
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
             raise Exception('NotificationManager not satisfied based on current conditions')
@@ -84,6 +82,7 @@ class RGB(MQTTSubscriber):
         time.sleep(0.5)
 
     def _initialise_gpio(self):
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
 
     def _clean_up(self):
