@@ -33,23 +33,23 @@ leds:
     mqtt:
       topics:
         - topic: brompton/living-room/temperature
-          color:
+          colour:
             red: 0
             green: 255
             blue: 0
-          type: pulse
+          style: pulse
         - topic: brompton/living-room/humidity
-          color:
+          colour:
             red: 0
             green: 255
             blue: 0
-          type: pulse
+          style: pulse
         - topic: brompton/living-room/pressure
-          color:
+          colour:
             red: 255
             green: 215
             blue: 0
-          type: flash
+          style: flash
 
 #  - type: BME280
 #    id: 1
