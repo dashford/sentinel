@@ -53,7 +53,6 @@ class RGB(MQTTSubscriber):
         ]
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
 
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
@@ -84,7 +83,14 @@ class RGB(MQTTSubscriber):
 
         time.sleep(0.5)
 
+    def _initialise_gpio(self):
+        GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
+
+    def _clean_up(self):
+        GPIO.cleanup()
+
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
+        self._initialise_gpio()
         p = GPIO.PWM(channel, frequency)
         p.start(0)
         for duty_cycle in range(0, 100, step):
@@ -94,8 +100,10 @@ class RGB(MQTTSubscriber):
             p.ChangeDutyCycle(duty_cycle)
             time.sleep(speed)
         p.stop()
+        self._clean_up()
 
     def _flash(self, rgb, frequency=100, duration=0.1):
+        self._initialise_gpio()
         red = GPIO.PWM(self._R, frequency)
         green = GPIO.PWM(self._G, frequency)
         blue = GPIO.PWM(self._B, frequency)
@@ -113,6 +121,7 @@ class RGB(MQTTSubscriber):
         red.stop()
         green.stop()
         blue.stop()
+        self._clean_up()
 
     def _map_rgb_to_single_channel(self, rgb):
         for component in rgb:
