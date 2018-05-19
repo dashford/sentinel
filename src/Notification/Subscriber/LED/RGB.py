@@ -28,12 +28,6 @@ class RGB(MQTTSubscriber):
             self.BLUE: self._B
         }
 
-        self._valid_pulse_colours = [
-            self._rgb_colours['red'],
-            self._rgb_colours['green'],
-            self._rgb_colours['blue']
-        ]
-
         self._rgb_colours = {
             self.RED: {
                 'red': 255,
@@ -51,6 +45,12 @@ class RGB(MQTTSubscriber):
                 'blue': 255
             }
         }
+
+        self._valid_pulse_colours = [
+            self._rgb_colours['red'],
+            self._rgb_colours['green'],
+            self._rgb_colours['blue']
+        ]
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
