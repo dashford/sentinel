@@ -80,6 +80,8 @@ class RGB(MQTTSubscriber):
         elif style == 'flash':
             self._flash(rgb=self._map_rgb_to_percentages(rgb=rgb))
 
+        time.sleep(0.5)
+
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
         p = GPIO.PWM(channel, frequency)
         p.start(0)
