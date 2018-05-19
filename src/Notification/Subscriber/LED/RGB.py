@@ -62,10 +62,7 @@ class RGB(MQTTSubscriber):
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE
 
-        print('here')
-
         for topic in self._topics:
-            print(topic)
             if topic['topic'] == msg.topic and 'colour' in topic:
                 rgb = {
                     'red': topic['colour']['red'],
@@ -74,9 +71,6 @@ class RGB(MQTTSubscriber):
                 }
             if topic['topic'] == msg.topic and 'style' in topic:
                 style = topic['style']
-
-        print(style)
-        print(rgb)
 
         if style == 'pulse' and rgb not in self._valid_pulse_colours:
             raise Exception('colour must be one of {}'.format(self._valid_pulse_colours))
@@ -87,7 +81,6 @@ class RGB(MQTTSubscriber):
             self._flash(rgb=self._map_rgb_to_percentages(rgb=rgb))
 
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
-        print('pulse called')
         p = GPIO.PWM(channel, frequency)
         p.start(0)
         for duty_cycle in range(0, 100, step):
@@ -98,8 +91,7 @@ class RGB(MQTTSubscriber):
             time.sleep(speed)
         p.stop()
 
-    def _flash(self, rgb, frequency=100, duration=1):
-        print('flash called')
+    def _flash(self, rgb, frequency=100, duration=0.25):
         red = GPIO.PWM(self._R, frequency)
         green = GPIO.PWM(self._G, frequency)
         blue = GPIO.PWM(self._B, frequency)
