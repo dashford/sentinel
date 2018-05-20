@@ -2,7 +2,6 @@
 
 ## TODO
 
-- move MQTT host, port and other details to ENV
 - Move config.yaml to .gitignore and create example placeholder
 - Validate and update dockerfile
 - Refactor scheduler add job in `__main__`
@@ -15,3 +14,4 @@
 - Type-hint methods
 - Add zope interfaces
 - Add MQTT message definitions/objects
+- Subscribers and MQTT client needs to have some error handling
