@@ -87,11 +87,11 @@ class RGB(MQTTSubscriber):
         time.sleep(0.5)
 
     def _initialise_gpio(self):
-        RPIO.setmode(RPIO.BCM)
-        RPIO.setup([self._R, self._G, self._B], RPIO.OUT, initial=RPIO.LOW)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
 
     def _clean_up(self):
-        RPIO.cleanup()
+        GPIO.cleanup()
 
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
         self._initialise_gpio()
