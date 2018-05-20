@@ -1,5 +1,10 @@
 import time
+import sys
+import logging
+log_format = '%(levelname)s | %(asctime)-15s | %(message)s'
+logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
 
+import RPIO
 import RPi.GPIO as GPIO
 from src.Notification.Subscriber.MQTTSubscriber import MQTTSubscriber
 
@@ -82,11 +87,11 @@ class RGB(MQTTSubscriber):
         time.sleep(0.5)
 
     def _initialise_gpio(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup([self._R, self._G, self._B], GPIO.OUT, initial=GPIO.LOW)
+        RPIO.setmode(RPIO.BCM)
+        RPIO.setup([self._R, self._G, self._B], RPIO.OUT, initial=RPIO.LOW)
 
     def _clean_up(self):
-        GPIO.cleanup()
+        RPIO.cleanup()
 
     def _pulse(self, channel, frequency=100, speed=0.005, step=1):
         self._initialise_gpio()
@@ -105,6 +110,7 @@ class RGB(MQTTSubscriber):
         try:
             self._initialise_gpio()
             print('_flash setting PWM')
+
             red = GPIO.PWM(self._R, frequency)
             green = GPIO.PWM(self._G, frequency)
             blue = GPIO.PWM(self._B, frequency)
