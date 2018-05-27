@@ -29,6 +29,7 @@ leds:
       allow:
         - after_sunrise
       deny:
+        - after_sunrise
         - after_sunset
     mqtt:
       topics:
