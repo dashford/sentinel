@@ -90,6 +90,7 @@ if __name__ == '__main__':
         while True:
             time.sleep(60)
     except (KeyboardInterrupt, SystemExit):
-        GPIO.cleanup()
         scheduler.shutdown()
         mqtt_client.loop_stop()
+    finally:
+        GPIO.cleanup()
