@@ -51,7 +51,7 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
 
     for sensor in configuration['sensors']:
-        device = Device_Factory.create_sensor(device=sensor['type'])
+        device = Device_Factory.create_sensor(device=sensor['type'], address=sensor['address'])
         # TODO come up with better way to add these jobs
         for metric in sensor['metrics']:
             if metric['metric'] == 'temperature':

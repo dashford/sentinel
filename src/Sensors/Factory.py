@@ -6,11 +6,11 @@ from src.Notification.Subscriber.LED.RGB import RGB
 class Factory:
 
     @staticmethod
-    def create_sensor(device):
+    def create_sensor(device, address):
         if device == 'BME280':
             return BME280()
         elif device == 'BME680':
-            return BME680()
+            return BME680(address=address)
 
     @staticmethod
     def create_led(device, configuration, notification_manager):
