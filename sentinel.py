@@ -1,19 +1,20 @@
 import os
 import time
 
+import RPi.GPIO as GPIO
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv, find_dotenv
 
 from src.Event.EventDispatcher import EventDispatcher
-from src.Event.Subscriber.TemperatureSubscriber import TemperatureSubscriber
+from src.Event.Subscriber.AirQualitySubscriber import AirQualitySubscriber
 from src.Event.Subscriber.HumiditySubscriber import HumiditySubscriber
 from src.Event.Subscriber.PressureSubscriber import PressureSubscriber
-from src.Event.Subscriber.AirQualitySubscriber import AirQualitySubscriber
+from src.Event.Subscriber.TemperatureSubscriber import TemperatureSubscriber
 from src.MQTT.Factory import Factory
+from src.Notification.NotificationManager import NotificationManager
 from src.Sensors.Factory import Factory as Device_Factory
 from src.Values.Credentials import Credentials
-from src.Notification.NotificationManager import NotificationManager
 
 if __name__ == '__main__':
     load_dotenv(find_dotenv())
@@ -83,5 +84,6 @@ if __name__ == '__main__':
         while True:
             time.sleep(60)
     except (KeyboardInterrupt, SystemExit):
+        GPIO.cleanup()
         scheduler.shutdown()
         mqtt_client.loop_stop()
