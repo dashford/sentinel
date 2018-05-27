@@ -20,7 +20,7 @@ from src.Values.Credentials import Credentials
 
 if __name__ == '__main__':
     # TODO decide on format
-    log_format = '%(levelname)s | %(asctime)-15s | %(message)s'
+    log_format = '%(levelname)s | %(name)s | %(asctime)s | %(message)s'
     logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
 
     load_dotenv(find_dotenv())

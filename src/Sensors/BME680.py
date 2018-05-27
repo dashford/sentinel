@@ -1,6 +1,7 @@
 import bme680
 import time
 import json
+import logging
 
 from src.Event.EventDispatcher import EventDispatcher
 from src.Event.Events.TemperatureEvent import TemperatureEvent
@@ -9,8 +10,13 @@ from src.MQTT.Message.Formatters.JsonFormatter import JsonFormatter
 
 
 class BME680:
-    def __init__(self):
-        self._sensor = bme680.BME680()
+    def __init__(self, address):
+        logging.debug('Initialising BME680 sensor')
+        if address == '0x77':
+            address = bme680.I2C_ADDR_SECONDARY
+        else:
+            address = bme680.I2C_ADDR_PRIMARY
+        self._sensor = bme680.BME680(i2c_addr=address)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
         self._sensor.set_pressure_oversample(bme680.OS_4X)
         self._sensor.set_temperature_oversample(bme680.OS_8X)
@@ -25,6 +31,7 @@ class BME680:
         :param dict metric_details: Details of the metric from user configuration
         :return:
         """
+        logging.debug('Running get_temperature')
         pending_measurement = True
         temperature = None
 
@@ -39,8 +46,10 @@ class BME680:
         message.add_key_value(key='temperature', value=temperature)
         message.add_key_value(key='success', value=True)
 
+        logging.info('Publishing message for _get_temperature to MQTT broker')
         mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
 
+        logging.info('Dispatching temperature event')
         event = TemperatureEvent(event_details=message)
         event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
 

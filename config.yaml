@@ -1,6 +1,7 @@
 sensors:
   - type: BME680
     id: 1
+    address: 0x76
     metrics:
       - metric: temperature
         poll: 20

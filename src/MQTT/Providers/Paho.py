@@ -47,4 +47,4 @@ class Paho:
         logging.info('Message with ID {} published'.format(mid))
 
     def _on_subscribe(self, client, userdata, mid, granted_qos):
-        print('_on_subscribe called')
+        logging.info('_on_subscribe called')
