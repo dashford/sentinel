@@ -3,15 +3,15 @@ sensors:
     id: 1
     metrics:
       - metric: temperature
-        poll: 20
+        poll: 5
         mqtt:
           topic: brompton/living-room/temperature
       - metric: humidity
-        poll: 20
+        poll: 7
         mqtt:
           topic: brompton/living-room/humidity
       - metric: pressure
-        poll: 60
+        poll: 13
         mqtt:
           topic: brompton/living-room/pressure
 #      - metric: air_quality
