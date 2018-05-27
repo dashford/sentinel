@@ -56,7 +56,7 @@ class RGB(MQTTSubscriber):
 
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
-            pass
+            return False
 
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE
