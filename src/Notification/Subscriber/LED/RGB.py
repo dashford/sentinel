@@ -56,7 +56,7 @@ class RGB(MQTTSubscriber):
 
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
-            raise Exception('NotificationManager not satisfied based on current conditions')
+            pass
 
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE

@@ -15,21 +15,17 @@ class NotificationManager:
 
     def is_satisfied(self):
         for denied in self._denies:
-            print('in deny: {}', denied)
             if denied == 'after_sunset' and self._is_after_sunset():
-                print('returning false')
                 return False
             if denied == 'after_sunrise' and self._is_after_sunrise():
-                print('returning false')
                 return False
             if denied == 'all':
-                print('returning false')
                 return False
 
         for allowed in self._allows:
-            print('in allow: {}', allowed)
+            if allowed == 'after_sunset' and self._is_after_sunset():
+                return True
             if allowed == 'after_sunrise' and self._is_after_sunrise():
-                print('returning true')
                 return True
 
         return False
