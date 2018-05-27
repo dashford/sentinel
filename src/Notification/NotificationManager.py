@@ -19,6 +19,9 @@ class NotificationManager:
             if denied == 'after_sunset' and self._is_after_sunset():
                 print('returning false')
                 return False
+            if denied == 'after_sunrise' and self._is_after_sunrise():
+                print('returning false')
+                return False
             if denied == 'all':
                 print('returning false')
                 return False
