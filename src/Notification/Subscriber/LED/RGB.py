@@ -1,8 +1,4 @@
 import time
-# import sys
-# import logging
-# log_format = '%(levelname)s | %(asctime)-15s | %(message)s'
-# logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
 
 import RPi.GPIO as GPIO
 from src.Notification.Subscriber.MQTTSubscriber import MQTTSubscriber

@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 import time
 
 import RPi.GPIO as GPIO
@@ -17,6 +19,10 @@ from src.Sensors.Factory import Factory as Device_Factory
 from src.Values.Credentials import Credentials
 
 if __name__ == '__main__':
+    # TODO decide on format
+    log_format = '%(levelname)s | %(asctime)-15s | %(message)s'
+    logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
+
     load_dotenv(find_dotenv())
     with open('config.yaml') as fp:
         configuration = yaml.load(fp)

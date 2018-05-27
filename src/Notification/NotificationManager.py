@@ -1,8 +1,6 @@
 import datetime
 import os
 
-import pytz
-
 from sunrise_sunset.sunrise_sunset import SunriseSunset
 
 
@@ -16,18 +14,36 @@ class NotificationManager:
         self._longitude = float(os.getenv('LOCATION_LONGITUDE'))
 
     def is_satisfied(self):
-        pass
+        for denied in self._denies:
+            if denied == 'after_sunset' and self._is_after_sunset():
+                return False
+            if denied == 'all':
+                return False
+
+        for allowed in self._allows:
+            if allowed == 'after_sunrise' and self._is_after_sunrise():
+                return True
+
+        return False
 
     def _is_after_sunrise(self):
+        now = datetime.datetime.utcnow()
         sun = SunriseSunset(
-            pytz.timezone('Europe/Dublin').localize(datetime.datetime.now()),
+            now,
             latitude=self._latitude,
             longitude=self._longitude
         )
-        # sun = self._city.sun(local=True)
-        # return now > sun['sunrise']
+        sunrise, sunset = sun.calculate()
+
+        return now > sunrise
 
     def _is_after_sunset(self):
-        now = pytz.timezone('Europe/Dublin').localize(datetime.datetime.now())
-        # sun = self._city.sun(local=True)
-        # return now > sun['sunset']
+        now = datetime.datetime.utcnow()
+        sun = SunriseSunset(
+            now,
+            latitude=self._latitude,
+            longitude=self._longitude
+        )
+        sunrise, sunset = sun.calculate()
+
+        return now > sunset
