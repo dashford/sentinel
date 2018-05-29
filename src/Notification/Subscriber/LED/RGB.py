@@ -56,6 +56,12 @@ class RGB(MQTTSubscriber):
 
         self._initialise_gpio()
 
+    def __del__(self):
+        logging.debug('Destroying RGB class')
+        self._red.stop()
+        self._green.stop()
+        self._blue.stop()
+
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
             return False
