@@ -91,30 +91,36 @@ class RGB(MQTTSubscriber):
         time.sleep(0.5)
 
     def _initialise_gpio(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup([self._red_gpio, self._green_gpio, self._blue_gpio], GPIO.OUT, initial=GPIO.LOW)
+        try:
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup([self._red_gpio, self._green_gpio, self._blue_gpio], GPIO.OUT, initial=GPIO.LOW)
 
-        self._red = GPIO.PWM(self._red_gpio, 100)
-        self._green = GPIO.PWM(self._green_gpio, 100)
-        self._blue = GPIO.PWM(self._blue_gpio, 100)
+            self._red = GPIO.PWM(self._red_gpio, 100)
+            self._green = GPIO.PWM(self._green_gpio, 100)
+            self._blue = GPIO.PWM(self._blue_gpio, 100)
 
-        self._red.start(0)
-        self._green.start(0)
-        self._blue.start(0)
+            self._red.start(0)
+            self._green.start(0)
+            self._blue.start(0)
+        except Exception:
+            logging.error('Exception')
 
     def _flash(self, rgb, duration=0.1):
-        logging.debug('Setting duty cycle to r:{}, g:{}, b:{}'.format(rgb['red'], rgb['green'], rgb['blue']))
-        self._red.ChangeDutyCycle(rgb['red'])
-        self._green.ChangeDutyCycle(rgb['green'])
-        self._blue.ChangeDutyCycle(rgb['blue'])
+        try:
+            logging.debug('Setting duty cycle to r:{}, g:{}, b:{}'.format(rgb['red'], rgb['green'], rgb['blue']))
+            self._red.ChangeDutyCycle(rgb['red'])
+            self._green.ChangeDutyCycle(rgb['green'])
+            self._blue.ChangeDutyCycle(rgb['blue'])
 
-        logging.debug('sleep')
-        time.sleep(duration)
+            logging.debug('Sleep')
+            time.sleep(duration)
 
-        logging.debug('Setting duty cycle to 0')
-        self._red.ChangeDutyCycle(0)
-        self._green.ChangeDutyCycle(0)
-        self._blue.ChangeDutyCycle(0)
+            logging.debug('Setting duty cycle to 0')
+            self._red.ChangeDutyCycle(0)
+            self._green.ChangeDutyCycle(0)
+            self._blue.ChangeDutyCycle(0)
+        except Exception:
+            logging.error('Exception _flash')
 
     # def _pulse(self, channel, frequency=100, speed=0.005, step=1):
     #     self._initialise_gpio()
