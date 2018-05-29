@@ -61,6 +61,7 @@ class RGB(MQTTSubscriber):
         self._red.stop()
         self._green.stop()
         self._blue.stop()
+        GPIO.cleanup()
 
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
