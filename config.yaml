@@ -4,7 +4,7 @@ sensors:
     address: 0x76
     metrics:
       - metric: temperature
-        poll: 3
+        poll: 20
         mqtt:
           topic: brompton/living-room/temperature
       - metric: humidity
