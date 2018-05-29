@@ -61,7 +61,6 @@ class RGB(MQTTSubscriber):
         self._red.stop()
         self._green.stop()
         self._blue.stop()
-        GPIO.cleanup()
 
     def notify(self, mosq, obj, msg):
         if self._notification_manager.is_satisfied() is False:
@@ -70,15 +69,15 @@ class RGB(MQTTSubscriber):
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]
         style = self.DEFAULT_STYLE
 
-        # for topic in self._topics:
-        #     if topic['topic'] == msg.topic and 'colour' in topic:
-        #         rgb = {
-        #             'red': topic['colour']['red'],
-        #             'green': topic['colour']['green'],
-        #             'blue': topic['colour']['blue']
-        #         }
-        #     if topic['topic'] == msg.topic and 'style' in topic:
-        #         style = topic['style']
+        for topic in self._topics:
+            if topic['topic'] == msg.topic and 'colour' in topic:
+                rgb = {
+                    'red': topic['colour']['red'],
+                    'green': topic['colour']['green'],
+                    'blue': topic['colour']['blue']
+                }
+            if topic['topic'] == msg.topic and 'style' in topic:
+                style = topic['style']
 
         if style == 'pulse' and rgb not in self._valid_pulse_colours:
             raise Exception('colour must be one of {}'.format(self._valid_pulse_colours))
@@ -104,13 +103,15 @@ class RGB(MQTTSubscriber):
         self._blue.start(0)
 
     def _flash(self, rgb, duration=0.1):
-        logging.debug('Calling _flash')
+        logging.debug('Setting duty cycle to r:{}, g:{}, b:{}'.format(rgb['red'], rgb['green'], rgb['blue']))
         self._red.ChangeDutyCycle(rgb['red'])
         self._green.ChangeDutyCycle(rgb['green'])
         self._blue.ChangeDutyCycle(rgb['blue'])
 
+        logging.debug('sleep')
         time.sleep(duration)
 
+        logging.debug('Setting duty cycle to 0')
         self._red.ChangeDutyCycle(0)
         self._green.ChangeDutyCycle(0)
         self._blue.ChangeDutyCycle(0)
