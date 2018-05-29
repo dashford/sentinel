@@ -93,11 +93,11 @@ class RGB(MQTTSubscriber):
     def _initialise_gpio(self):
         try:
             GPIO.setmode(GPIO.BCM)
-            GPIO.setup([23, 25, 24], GPIO.OUT, initial=GPIO.LOW)
+            GPIO.setup([self._red_gpio, self._green_gpio, self._blue_gpio], GPIO.OUT, initial=GPIO.LOW)
 
-            self._red = GPIO.PWM(23, 100)
-            self._green = GPIO.PWM(25, 100)
-            self._blue = GPIO.PWM(24, 100)
+            self._red = GPIO.PWM(self._red_gpio, 100)
+            self._green = GPIO.PWM(self._green_gpio, 100)
+            self._blue = GPIO.PWM(self._blue_gpio, 100)
 
             self._red.start(0)
             self._green.start(0)
