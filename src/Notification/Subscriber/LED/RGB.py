@@ -1,4 +1,5 @@
 import time
+import logging
 
 import RPi.GPIO as GPIO
 from src.Notification.Subscriber.MQTTSubscriber import MQTTSubscriber
@@ -14,6 +15,7 @@ class RGB(MQTTSubscriber):
     DEFAULT_STYLE = 'flash'
 
     def __init__(self, configuration, notification_manager):
+        logging.debug('Initialising RGB')
         self._notification_manager = notification_manager
 
         self._id = configuration['id']
@@ -95,6 +97,7 @@ class RGB(MQTTSubscriber):
         self._blue.start(0)
 
     def _flash(self, rgb, duration=0.1):
+        logging.debug('Calling _flash')
         self._red.ChangeDutyCycle(rgb['red'])
         self._green.ChangeDutyCycle(rgb['green'])
         self._blue.ChangeDutyCycle(rgb['blue'])
