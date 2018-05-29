@@ -43,6 +43,7 @@ if __name__ == '__main__':
             configuration=led,
             notification_manager=NotificationManager(configuration=led['notifications'])
         )
+        led_device.notify()
         for topic in led['mqtt']['topics']:
             mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.notify)
 
