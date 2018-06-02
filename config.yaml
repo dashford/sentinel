@@ -1,7 +1,6 @@
 sensors:
   - type: BME680
     id: 1
-    active: true
     address: 0x76
     metrics:
       - metric: temperature
@@ -19,7 +18,6 @@ sensors:
 
   - type: BME680
     id: 2
-    active: true
     address: 0x77
     metrics:
       - metric: temperature
@@ -44,7 +42,7 @@ leds:
     active: true
     channels:
       r: 23
-      g: 25 # 8, 25
+      g: 25
       b: 24
     notifications:
       allow:

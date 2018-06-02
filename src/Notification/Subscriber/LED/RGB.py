@@ -19,6 +19,7 @@ class RGB(MQTTSubscriber):
         self._notification_manager = notification_manager
 
         self._id = configuration['id']
+        self._active = configuration['active']
         self._topics = configuration['mqtt']['topics']
         self._red_gpio = configuration['channels']['r']
         self._green_gpio = configuration['channels']['g']
@@ -63,7 +64,7 @@ class RGB(MQTTSubscriber):
         self._blue.stop()
 
     def notify(self, mosq, obj, msg):
-        if self._notification_manager.is_satisfied() is False:
+        if self._notification_manager.is_satisfied() is False or self._active is False:
             return False
 
         rgb = self._rgb_colours[self.DEFAULT_COLOUR]

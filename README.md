@@ -15,4 +15,3 @@
 - Add zope interfaces
 - Add MQTT message definitions/objects
 - Subscribers and MQTT client needs to have some error handling
-- Implement config `active` parameters
