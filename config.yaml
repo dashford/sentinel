@@ -1,6 +1,7 @@
 sensors:
   - type: BME680
     id: 1
+    active: true
     address: 0x76
     metrics:
       - metric: temperature
@@ -18,6 +19,7 @@ sensors:
 
   - type: BME680
     id: 2
+    active: true
     address: 0x77
     metrics:
       - metric: temperature
@@ -39,9 +41,10 @@ sensors:
 leds:
   - type: rgb
     id: 1
+    active: true
     channels:
       r: 23
-      g: 25
+      g: 8 # 25
       b: 24
     notifications:
       allow:
@@ -68,28 +71,3 @@ leds:
             green: 0
             blue: 255
           style: flash
-
-#  - type: BME280
-#    id: 1
-#    metrics:
-#      - metric: temperature
-#        unit: celsius
-#        poll: 5
-#      - metric: humidity
-#        poll: 10
-#      - metric: pressure
-#        poll: 12
-#  - type: DS18B20
-#    id: 021583ad40ff
-#
-#  - type: bme680
-#    id: test-id
-#    metrics:
-#      temperature:
-#        poll: 5
-#      humidity:
-#        poll: 5
-#      pressure:
-#        poll: 5
-#      air-quality:
-#        poll: 60
