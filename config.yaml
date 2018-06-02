@@ -44,7 +44,7 @@ leds:
     active: true
     channels:
       r: 23
-      g: 8 # 25
+      g: 25 # 8, 25
       b: 24
     notifications:
       allow:
