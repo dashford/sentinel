@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Move config.yaml to .gitignore and create example placeholder
 - Validate and update dockerfile
 - Refactor scheduler add job in `__main__`
 - Convert into executable script?
