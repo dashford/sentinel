@@ -32,6 +32,10 @@ sensors:
         poll: 60
         mqtt:
           topic: brompton/living-room-two/pressure
+#      - metric: air_quality
+#        poll: 900
+#        mqtt:
+#          topic: brompton/living-room/air_quality
 leds:
   - type: rgb
     id: 1

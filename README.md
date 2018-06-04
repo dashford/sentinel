@@ -10,8 +10,6 @@
 - Tests
 - Clean up `Sensors` folder
 - Logging
-- Clean up `requirements.txt`
 - Type-hint methods
-- Add zope interfaces
 - Add MQTT message definitions/objects
 - Subscribers and MQTT client needs to have some error handling
