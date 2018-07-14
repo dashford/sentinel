@@ -1,6 +1,6 @@
 # from Adafruit_BME280 import BME280 as Device
 # from Adafruit_BME280.BME280 import BME280_OSAMPLE_8
-from twisted.internet import defer
+#from twisted.internet import defer
 
 from src.Sensors.Sensor import Sensor
 
@@ -20,7 +20,7 @@ class BME280:
         print('get_temperature')
         # d = defer.Deferred()
         # d.addCallback(self._some_other())
-        return defer.succeed(self._some_other())
+        # return defer.succeed(self._some_other())
         return 10.0
         if unit == Sensor.UNIT_CELSIUS:
             return self._sensor.read_temperature()
