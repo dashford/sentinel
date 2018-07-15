@@ -37,15 +37,15 @@ if __name__ == '__main__':
     mqtt_client = Factory.create_client(provider=os.getenv('MQTT_PROVIDER'), credentials=mqtt_credentials)
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
 
-    GPIO.setmode(GPIO.BCM)
-    for led in configuration['leds']:
-        led_device = Device_Factory.create_led(
+    leds = {}
+    for index, led in enumerate(configuration['leds']):
+        leds[index] = Device_Factory.create_led(
             device=led['type'],
             configuration=led,
             notification_manager=NotificationManager(configuration=led['notifications'])
         )
         for topic in led['mqtt']['topics']:
-            mqtt_client.message_callback_add(subscription=topic['topic'], callback=led_device.notify)
+            mqtt_client.message_callback_add(subscription=topic['topic'], callback=leds[index].notify)
 
     mqtt_client.subscribe(topic='brompton/#')
 
