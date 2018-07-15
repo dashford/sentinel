@@ -37,6 +37,7 @@ if __name__ == '__main__':
     mqtt_client = Factory.create_client(provider=os.getenv('MQTT_PROVIDER'), credentials=mqtt_credentials)
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
 
+    GPIO.setmode(GPIO.BCM)
     for led in configuration['leds']:
         led_device = Device_Factory.create_led(
             device=led['type'],
