@@ -39,7 +39,7 @@ sensors:
 
   - type: DS18B20
     id: 3
-    address: 28-021583a440ff
+    address: 021583a440ff
     metrics:
       - metric: temperature
         poll: 20
@@ -48,7 +48,7 @@ sensors:
 
   - type: DS18B20
     id: 4
-    address: 28-021583ad40ff
+    address: 021583ad40ff
     metrics:
       - metric: temperature
         poll: 20

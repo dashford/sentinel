@@ -11,7 +11,7 @@ class DS18B20:
         self._sensor = Sensor(sensor_id=address)
 
     def get_temperature(self, mqtt_client, event_dispatcher, metric_details):
-        logging.debug('Initialising BME680 sensor')
+        logging.debug('Initialising DS18B20 sensor')
         temperature = self._sensor.get_temperature()
 
         message = Message()
