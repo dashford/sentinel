@@ -36,6 +36,25 @@ sensors:
 #        poll: 900
 #        mqtt:
 #          topic: brompton/living-room/air_quality
+
+  - type: DS18B20
+    id: 3
+    address: 28-021583a440ff
+    metrics:
+      - metric: temperature
+        poll: 20
+        mqtt:
+          topic: brompton/living-room-three/temperature
+
+  - type: DS18B20
+    id: 4
+    address: 28-021583ad40ff
+    metrics:
+      - metric: temperature
+        poll: 20
+        mqtt:
+          topic: brompton/living-room-four/temperature
+
 leds:
   - type: rgb
     id: 1
