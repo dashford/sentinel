@@ -13,7 +13,7 @@ class BME680:
     def __init__(self, address):
         logging.debug('Initialising BME680 sensor with address {}'.format(address))
 
-        if address == '0x77':
+        if address == 0x77:
             address = bme680.I2C_ADDR_SECONDARY
             logging.debug('Using secondary address')
         else:
