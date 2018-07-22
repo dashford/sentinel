@@ -11,7 +11,7 @@ from src.MQTT.Message.Formatters.JsonFormatter import JsonFormatter
 
 class BME680:
     def __init__(self, address):
-        logging.debug('Initialising BME680 sensor')
+        logging.debug('Initialising BME680 sensor with address {}'.format(address))
 
         if address == '0x77':
             address = bme680.I2C_ADDR_SECONDARY
