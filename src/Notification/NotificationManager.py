@@ -9,8 +9,6 @@ class NotificationManager:
         self._sun_predicate = Sun()
 
     def is_satisfied(self):
-        return True
-        
         for denied in self._denies:
             if denied == 'after_sunset' and self._sun_predicate.is_after_sunset():
                 return False
