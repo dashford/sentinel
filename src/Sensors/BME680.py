@@ -15,8 +15,10 @@ class BME680:
 
         if address == '0x77':
             address = bme680.I2C_ADDR_SECONDARY
+            logging.debug('Using secondary address')
         else:
             address = bme680.I2C_ADDR_PRIMARY
+            logging.debug('Using primary address')
 
         self._sensor = bme680.BME680(i2c_addr=address)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
@@ -41,6 +43,7 @@ class BME680:
             if self._sensor.get_sensor_data():
                 temperature = self._sensor.data.temperature
                 pending_measurement = False
+                logging.debug('Temperature: {}'.format(temperature))
             time.sleep(0.5)
 
         message = Message()
