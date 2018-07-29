@@ -10,3 +10,5 @@ astral==1.*
 git+https://github.com/palto42/SunriseSunsetCalculator.git
 RPIO==0.10.*
 pytest
+Adafruit_CCS811==0.1
+blinker==1.4

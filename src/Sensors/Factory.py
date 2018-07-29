@@ -9,7 +9,7 @@ class Factory:
     @staticmethod
     def create_sensor(device, address):
         if device == 'BME280':
-            return BME280()
+            return BME280(address=address)
         elif device == 'BME680':
             return BME680(address=address)
         elif device == 'DS18B20':

@@ -7,16 +7,14 @@ import RPi.GPIO as GPIO
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv, find_dotenv
+from blinker import signal
 
 from src.Event.EventDispatcher import EventDispatcher
-from src.Event.Subscriber.AirQualitySubscriber import AirQualitySubscriber
-from src.Event.Subscriber.HumiditySubscriber import HumiditySubscriber
-from src.Event.Subscriber.PressureSubscriber import PressureSubscriber
-from src.Event.Subscriber.TemperatureSubscriber import TemperatureSubscriber
 from src.MQTT.Factory import Factory
 from src.Notification.NotificationManager import NotificationManager
 from src.Sensors.Factory import Factory as Device_Factory
 from src.Values.Credentials import Credentials
+from src.Signals.Subscribers.MQTT import MQTT as MQTTSubscriber
 
 if __name__ == '__main__':
     # TODO decide on format
@@ -28,14 +26,17 @@ if __name__ == '__main__':
         configuration = yaml.load(fp)
 
     event_dispatcher = EventDispatcher()
-    event_dispatcher.add_subscriber(subscriber=TemperatureSubscriber())
-    event_dispatcher.add_subscriber(subscriber=HumiditySubscriber())
-    event_dispatcher.add_subscriber(subscriber=PressureSubscriber())
-    event_dispatcher.add_subscriber(subscriber=AirQualitySubscriber())
 
-    mqtt_credentials = Credentials(username=os.getenv('MQTT_USERNAME'), password=os.getenv('MQTT_PASSWORD'))
-    mqtt_client = Factory.create_client(provider=os.getenv('MQTT_PROVIDER'), credentials=mqtt_credentials)
+    mqtt_client = Factory.create_client(
+        provider=os.getenv('MQTT_PROVIDER'),
+        credentials=Credentials(username=os.getenv('MQTT_USERNAME'), password=os.getenv('MQTT_PASSWORD'))
+    )
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
+
+    mqtt_signal_subscriber = MQTTSubscriber(mqtt_client=mqtt_client)
+
+    temperature_signal = signal('temperature')
+    temperature_signal.connect(mqtt_signal_subscriber.notify())
 
     leds = {}
     for index, led in enumerate(configuration['leds']):

@@ -2,11 +2,9 @@ import bme680
 import time
 import json
 import logging
+from blinker import signal
 
 from src.Event.EventDispatcher import EventDispatcher
-from src.Event.Events.TemperatureEvent import TemperatureEvent
-from src.MQTT.Message.Message import Message
-from src.MQTT.Message.Formatters.JsonFormatter import JsonFormatter
 
 
 class BME680:
@@ -28,14 +26,14 @@ class BME680:
 
     def get_temperature(self, mqtt_client, event_dispatcher, metric_details):
         """
-        Return the temperature.
+        Return measured temperature from the device.
 
         :param mqtt_client:
         :param EventDispatcher event_dispatcher:
         :param dict metric_details: Details of the metric from user configuration
         :return:
         """
-        logging.debug('Running get_temperature')
+        logging.debug('Measuring temperature')
         pending_measurement = True
         temperature = None
 
@@ -43,20 +41,25 @@ class BME680:
             if self._sensor.get_sensor_data():
                 temperature = self._sensor.data.temperature
                 pending_measurement = False
-                logging.debug('Temperature: {}'.format(temperature))
+                logging.info('Temperature received from sensor: {}'.format(temperature))
+            logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        message = Message()
-        message_formatter = JsonFormatter()
-        message.add_key_value(key='temperature', value=temperature)
-        message.add_key_value(key='success', value=True)
+        logging.info('Publishing signal for temperature data')
+        temperature_signal = signal('temperature')
+        temperature_signal.send(self, temperature=temperature, mqtt_topic=metric_details['mqtt']['topic'])
 
-        logging.info('Publishing message for _get_temperature to MQTT broker')
-        mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
-
-        logging.info('Dispatching temperature event')
-        event = TemperatureEvent(event_details=message)
-        event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
+        # message = Message()
+        # message_formatter = JsonFormatter()
+        # message.add_key_value(key='temperature', value=temperature)
+        # message.add_key_value(key='success', value=True)
+        #
+        # logging.info('Publishing message for _get_temperature to MQTT broker')
+        # mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
+        #
+        # logging.info('Dispatching temperature event')
+        # event = TemperatureEvent(event_details=message)
+        # event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
 
     def get_humidity(self, mqtt_client, event_dispatcher, mqtt_details):
         pending_measurement = True

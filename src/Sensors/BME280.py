@@ -1,32 +1,23 @@
-# from Adafruit_BME280 import BME280 as Device
-# from Adafruit_BME280.BME280 import BME280_OSAMPLE_8
-#from twisted.internet import defer
+import logging
 
-from src.Sensors.Sensor import Sensor
+import Adafruit_BME280
 
 
 class BME280:
-    def __init__(self):
-        self._sensor = None
-        # self._sensor = Device(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+    def __init__(self, address):
+        logging.debug('Initialising BME280 sensor with address {}'.format(address))
+        self._sensor = Adafruit_BME280.BME280(address=address)
 
-    async def get_temperature(self, unit=Sensor.UNIT_CELSIUS):
+    def get_temperature(self):
         """
         Return measured temperature from the device.
 
-        :param string unit:
         :return float:
         """
-        print('get_temperature')
-        # d = defer.Deferred()
-        # d.addCallback(self._some_other())
-        # return defer.succeed(self._some_other())
-        return 10.0
-        if unit == Sensor.UNIT_CELSIUS:
-            return self._sensor.read_temperature()
+        temperature = self._sensor.read_temperature()
+        logging.info('Returning temperature: {}'.format(temperature))
 
-    def _some_other(self):
-        return 11
+        return temperature
 
     def get_humidity(self):
         """
@@ -34,9 +25,10 @@ class BME280:
 
         :return float:
         """
-        print('get_humidity')
-        return 15.0
-        return self._sensor.read_humidity()
+        humidity = self._sensor.read_humidity()
+        logging.info('Returning humidity: {}'.format(humidity))
+
+        return humidity
 
     def get_pressure(self):
         """
@@ -44,6 +36,7 @@ class BME280:
 
         :return float:
         """
-        print('get_pressure')
-        return 27.1
-        return self._sensor.read_pressure()
+        pressure = self._sensor.read_pressure()
+        logging.info('Returning pressure: {}'.format(pressure))
+
+        return pressure
