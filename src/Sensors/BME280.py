@@ -1,6 +1,7 @@
 import logging
 
 import Adafruit_BME280
+from blinker import signal
 
 
 class BME280:
@@ -12,12 +13,14 @@ class BME280:
         """
         Return measured temperature from the device.
 
-        :return float:
+        :return:
         """
+        logging.debug('Measuring temperature')
         temperature = self._sensor.read_temperature()
         logging.info('Returning temperature: {}'.format(temperature))
 
-        return temperature
+        temperature_signal = signal('temperature')
+        temperature_signal.send(self, temperature=temperature, mqtt_topic=metric_details['mqtt']['topic'])
 
     def get_humidity(self):
         """
