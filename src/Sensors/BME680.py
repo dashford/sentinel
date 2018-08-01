@@ -4,12 +4,10 @@ import json
 import logging
 from blinker import signal
 
-from src.Event.EventDispatcher import EventDispatcher
-
 
 class BME680:
     def __init__(self, address):
-        logging.debug('Initialising BME680 sensor with address {}'.format(address))
+        logging.info('Initialising BME680 sensor with address {}'.format(address))
 
         if address == 0x77:
             address = bme680.I2C_ADDR_SECONDARY
@@ -24,13 +22,11 @@ class BME680:
         self._sensor.set_temperature_oversample(bme680.OS_8X)
         self._sensor.set_filter(bme680.FILTER_SIZE_3)
 
-    def get_temperature(self, mqtt_client, event_dispatcher, mqtt_details):
+    def get_temperature(self, mqtt_details):
         """
         Return measured temperature from the device.
 
-        :param mqtt_client:
-        :param EventDispatcher event_dispatcher:
-        :param dict mqtt_details: Details of the metric from user configuration
+        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring temperature')
@@ -49,19 +45,14 @@ class BME680:
         temperature_signal = signal('temperature')
         temperature_signal.send(self, temperature=temperature, mqtt_topic=mqtt_details['topic'])
 
-        # message = Message()
-        # message_formatter = JsonFormatter()
-        # message.add_key_value(key='temperature', value=temperature)
-        # message.add_key_value(key='success', value=True)
-        #
-        # logging.info('Publishing message for _get_temperature to MQTT broker')
-        # mqtt_client.publish(metric_details['mqtt']['topic'], message_formatter.format(message=message.get_message()))
-        #
-        # logging.info('Dispatching temperature event')
-        # event = TemperatureEvent(event_details=message)
-        # event_dispatcher.dispatch(event_name=EventDispatcher.TEMPERATURE_SAVED, event=event)
+    def get_humidity(self, mqtt_details):
+        """
+        Return measured humidity from the device.
 
-    def get_humidity(self, mqtt_client, event_dispatcher, mqtt_details):
+        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
+        :return:
+        """
+        logging.debug('Measuring humidity')
         pending_measurement = True
         humidity = None
 
@@ -69,16 +60,22 @@ class BME680:
             if self._sensor.get_sensor_data():
                 humidity = self._sensor.data.humidity
                 pending_measurement = False
+                logging.info('Humidity received from sensor: {}'.format(humidity))
+            logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        # TODO formalise this into object
-        message = {
-            "humidity": humidity
-        }
-
-        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+        logging.info('Publishing signal for humidity data')
+        humidity_signal = signal('humidity')
+        humidity_signal.send(self, humidity=humidity, mqtt_topic=mqtt_details['topic'])
 
     def get_pressure(self, mqtt_client, event_dispatcher, mqtt_details):
+        """
+        Return measured pressure from the device.
+
+        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
+        :return:
+        """
+        logging.debug('Measuring pressure')
         pending_measurement = True
         pressure = None
 
@@ -86,16 +83,22 @@ class BME680:
             if self._sensor.get_sensor_data():
                 pressure = self._sensor.data.pressure
                 pending_measurement = False
+                logging.info('Pressure received from sensor: {}'.format(pressure))
+            logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        # TODO formalise this into object
-        message = {
-            "pressure": pressure
-        }
+        logging.info('Publishing signal for pressure data')
+        pressure_signal = signal('pressure')
+        pressure_signal.send(self, pressure=pressure, mqtt_topic=mqtt_details['topic'])
 
-        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
+    def get_air_quality(self, mqtt_details):
+        """
+        Return measured air quality from the device.
 
-    def get_air_quality(self, mqtt_client, event_dispatcher, mqtt_details):
+        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
+        :return:
+        """
+        logging.debug('Measuring air quality')
         self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
         self._sensor.set_gas_heater_temperature(320)
         self._sensor.set_gas_heater_duration(150)
@@ -142,11 +145,11 @@ class BME680:
                 # Calculate air_quality_score.
                 air_quality = hum_score + gas_score
                 pending_measurement = False
+                logging.info('Air quality received from sensor: {}'.format(air_quality))
+            logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        # TODO formalise this into object
-        message = {
-            "air_quality": air_quality
-        }
-        mqtt_client.publish(mqtt_details['topic'], json.dumps(message))
         self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
+        logging.info('Publishing signal for air quality data')
+        air_quality_signal = signal('air_quality')
+        air_quality_signal.send(self, air_quality=air_quality, mqtt_topic=mqtt_details['topic'])

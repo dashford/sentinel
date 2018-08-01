@@ -9,7 +9,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv, find_dotenv
 from blinker import signal
 
-from src.Event.EventDispatcher import EventDispatcher
 from src.MQTT.Factory import Factory
 from src.Notification.NotificationManager import NotificationManager
 from src.Sensors.Factory import Factory as Device_Factory
@@ -25,8 +24,6 @@ if __name__ == '__main__':
     with open('config.yaml') as fp:
         configuration = yaml.load(fp)
 
-    event_dispatcher = EventDispatcher()
-
     mqtt_client = Factory.create_client(
         provider=os.getenv('MQTT_PROVIDER'),
         credentials=Credentials(username=os.getenv('MQTT_USERNAME'), password=os.getenv('MQTT_PASSWORD'))
@@ -36,10 +33,17 @@ if __name__ == '__main__':
     mqtt_signal_subscriber = MQTTSubscriber(mqtt_client=mqtt_client)
 
     temperature_signal = signal('temperature')
-    temperature_signal.connect(mqtt_signal_subscriber.notify)
+    humidity_signal = signal('humidity')
+    pressure_signal = signal('pressure')
+    air_quality_signal = signal('air_quality')
 
-    leds = {}
+    temperature_signal.connect(mqtt_signal_subscriber.notify)
+    humidity_signal.connect(mqtt_signal_subscriber.notify)
+    pressure_signal.connect(mqtt_signal_subscriber.notify)
+    air_quality_signal.connect(mqtt_signal_subscriber.notify)
+
     if 'leds' in configuration:
+        leds = {}
         for index, led in enumerate(configuration['leds']):
             leds[index] = Device_Factory.create_led(
                 device=led['type'],
