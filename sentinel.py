@@ -36,17 +36,18 @@ if __name__ == '__main__':
     mqtt_signal_subscriber = MQTTSubscriber(mqtt_client=mqtt_client)
 
     temperature_signal = signal('temperature')
-    temperature_signal.connect(mqtt_signal_subscriber.notify())
+    temperature_signal.connect(mqtt_signal_subscriber.notify)
 
     leds = {}
-    for index, led in enumerate(configuration['leds']):
-        leds[index] = Device_Factory.create_led(
-            device=led['type'],
-            configuration=led,
-            notification_manager=NotificationManager(configuration=led['notifications'])
-        )
-        for topic in led['mqtt']['topics']:
-            mqtt_client.message_callback_add(subscription=topic['topic'], callback=leds[index].notify)
+    if 'leds' in configuration:
+        for index, led in enumerate(configuration['leds']):
+            leds[index] = Device_Factory.create_led(
+                device=led['type'],
+                configuration=led,
+                notification_manager=NotificationManager(configuration=led['notifications'])
+            )
+            for topic in led['mqtt']['topics']:
+                mqtt_client.message_callback_add(subscription=topic['topic'], callback=leds[index].notify)
 
     mqtt_client.subscribe(topic='brompton/#')
 
