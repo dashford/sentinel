@@ -9,7 +9,7 @@ class BME280:
         logging.debug('Initialising BME280 sensor with address {}'.format(address))
         self._sensor = Adafruit_BME280.BME280(address=address)
 
-    def get_temperature(self, metric_details):
+    def get_temperature(self, mqtt_details):
         """
         Return measured temperature from the device.
 
@@ -20,9 +20,9 @@ class BME280:
         logging.info('Returning temperature: {}'.format(temperature))
 
         temperature_signal = signal('temperature')
-        temperature_signal.send(self, temperature=temperature, mqtt_topic=metric_details['mqtt']['topic'])
+        temperature_signal.send(self, temperature=temperature, mqtt_topic=mqtt_details['topic'])
 
-    def get_humidity(self, metric_details):
+    def get_humidity(self, mqtt_details):
         """
         Return measured humidity from the device.
 
@@ -33,7 +33,7 @@ class BME280:
 
         return humidity
 
-    def get_pressure(self, metric_details):
+    def get_pressure(self, mqtt_details):
         """
         Return measured pressure from the device.
 

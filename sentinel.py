@@ -62,28 +62,28 @@ if __name__ == '__main__':
                     device.get_temperature,
                     'interval',
                     seconds=metric['poll'],
-                    args=[mqtt_client, event_dispatcher, metric]
+                    args=[metric['mqtt']]
                 )
             elif metric['metric'] == 'humidity':
                 scheduler.add_job(
                     device.get_humidity,
                     'interval',
                     seconds=metric['poll'],
-                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                    args=[metric['mqtt']]
                 )
             elif metric['metric'] == 'pressure':
                 scheduler.add_job(
                     device.get_pressure,
                     'interval',
                     seconds=metric['poll'],
-                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                    args=[metric['mqtt']]
                 )
             elif metric['metric'] == 'air_quality':
                 scheduler.add_job(
                     device.get_air_quality,
                     'interval',
                     seconds=metric['poll'],
-                    args=[mqtt_client, event_dispatcher, metric['mqtt']]
+                    args=[metric['mqtt']]
                 )
 
     mqtt_client.loop_start()
