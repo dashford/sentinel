@@ -108,15 +108,12 @@ class RGB(MQTTSubscriber):
 
     def _flash(self, rgb, duration=0.1):
         try:
-            logging.debug('Setting duty cycle to r:{}, g:{}, b:{}'.format(rgb['red'], rgb['green'], rgb['blue']))
             self._red.ChangeDutyCycle(rgb['red'])
             self._green.ChangeDutyCycle(rgb['green'])
             self._blue.ChangeDutyCycle(rgb['blue'])
 
-            logging.debug('Sleep')
             time.sleep(duration)
 
-            logging.debug('Setting duty cycle to 0')
             self._red.ChangeDutyCycle(0)
             self._green.ChangeDutyCycle(0)
             self._blue.ChangeDutyCycle(0)
