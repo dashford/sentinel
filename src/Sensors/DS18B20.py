@@ -8,6 +8,7 @@ class DS18B20:
 
     def __init__(self, address):
         logging.info('Initialising DS18B20 sensor with address {}'.format(address))
+        self._address = address
         self._sensor = Sensor(sensor_id=address)
 
     def get_temperature(self, mqtt_details):
@@ -22,6 +23,11 @@ class DS18B20:
         logging.info('Broadcasting temperature: {}'.format(temperature))
 
         temperature_signal = signal('temperature')
-        temperature_signal.send(self, temperature=temperature, mqtt_topic=mqtt_details['topic'])
+        temperature_signal.send(
+            self,
+            temperature=temperature,
+            address=self._address,
+            mqtt_topic=mqtt_details['topic']
+        )
 
 
