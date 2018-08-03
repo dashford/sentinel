@@ -68,7 +68,7 @@ class BME680:
         humidity_signal = signal('humidity')
         humidity_signal.send(self, humidity=humidity, mqtt_topic=mqtt_details['topic'])
 
-    def get_pressure(self, mqtt_client, event_dispatcher, mqtt_details):
+    def get_pressure(self, mqtt_details):
         """
         Return measured pressure from the device.
 
