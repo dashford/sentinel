@@ -15,4 +15,6 @@ class MQTT:
         for key, value in kwargs.items():
             message.add_key_value(key=key, value=value)
 
+        logging.debug('MQTT message: {}'.format(message))
+
         self._mqtt_client.publish(kwargs['mqtt_topic'], message_formatter.format(message=message.get_message()))
