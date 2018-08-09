@@ -1,6 +1,5 @@
 import bme680
 import time
-import json
 import logging
 from blinker import signal
 
@@ -16,6 +15,9 @@ class BME680:
             address = bme680.I2C_ADDR_PRIMARY
             logging.debug('Using primary address')
 
+        # TODO: Call baseline calculation and thread it
+        self._calculating_air_quality_baseline = False
+        self._gas_baseline = None
         self._sensor = bme680.BME680(i2c_addr=address)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
         self._sensor.set_pressure_oversample(bme680.OS_4X)
@@ -99,6 +101,10 @@ class BME680:
         :return:
         """
         logging.debug('Measuring air quality')
+        if self._calculating_air_quality_baseline:
+            logging.info('Sensor is currently calculating the air quality baseline')
+            return
+
         self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
         self._sensor.set_gas_heater_temperature(320)
         self._sensor.set_gas_heater_duration(150)
@@ -106,26 +112,13 @@ class BME680:
 
         pending_measurement = True
         air_quality = None
-        start_time = time.time()
-        current_time = time.time()
-        burn_in_time = 60
-        burn_in_data = []
-
-        while current_time - start_time < burn_in_time:
-            current_time = time.time()
-            if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
-                gas = self._sensor.data.gas_resistance
-                burn_in_data.append(gas)
-                time.sleep(1)
-
-        gas_baseline = sum(burn_in_data[-50:]) / 50.0
         hum_baseline = 40.0
         hum_weighting = 0.25
 
         while pending_measurement:
             if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
                 gas = self._sensor.data.gas_resistance
-                gas_offset = gas_baseline - gas
+                gas_offset = self._gas_baseline - gas
 
                 hum = self._sensor.data.humidity
                 hum_offset = hum - hum_baseline
@@ -138,7 +131,7 @@ class BME680:
 
                 # Calculate gas_score as the distance from the gas_baseline.
                 if gas_offset > 0:
-                    gas_score = (gas / gas_baseline) * (100 - (hum_weighting * 100))
+                    gas_score = (gas / self._gas_baseline) * (100 - (hum_weighting * 100))
                 else:
                     gas_score = 100 - (hum_weighting * 100)
 
@@ -153,3 +146,32 @@ class BME680:
         logging.info('Publishing signal for air quality data')
         air_quality_signal = signal('air_quality')
         air_quality_signal.send(self, air_quality=air_quality, mqtt_topic=mqtt_details['topic'])
+
+    def _calculate_air_quality_baseline(self):
+        """
+        Calculates the current baseline for the air quality sensor on the device.
+
+        :return:
+        """
+        logging.debug('Calculating air quality baseline')
+        self._calculating_air_quality_baseline = True
+        self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
+        self._sensor.set_gas_heater_temperature(320)
+        self._sensor.set_gas_heater_duration(150)
+        self._sensor.select_gas_heater_profile(0)
+
+        start_time = time.time()
+        current_time = time.time()
+        burn_in_time = 300
+        burn_in_data = []
+
+        while current_time - start_time < burn_in_time:
+            current_time = time.time()
+            if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
+                gas = self._sensor.data.gas_resistance
+                burn_in_data.append(gas)
+                time.sleep(1)
+
+        self._gas_baseline = sum(burn_in_data[-50:]) / 50.0
+        self._calculating_air_quality_baseline = False
+        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
