@@ -44,6 +44,7 @@ class BME280:
         :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
+        logging.debug('Measuring pressure')
         pressure = self._sensor.read_pressure()
         logging.info('Broadcasting pressure: {}'.format(pressure))
 

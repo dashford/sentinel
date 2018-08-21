@@ -15,8 +15,7 @@ class BME680:
             address = bme680.I2C_ADDR_PRIMARY
             logging.debug('Using primary address')
 
-        # TODO: Call baseline calculation and thread it
-        self._calculating_air_quality_baseline = False
+        self._air_quality_baseline_calculated = False
         self._gas_baseline = None
         self._sensor = bme680.BME680(i2c_addr=address)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
@@ -43,7 +42,7 @@ class BME680:
             logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        logging.info('Publishing signal for temperature data')
+        logging.info('Broadcasting temperature: {}'.format(temperature))
         temperature_signal = signal('temperature')
         temperature_signal.send(self, temperature=temperature, mqtt_topic=mqtt_details['topic'])
 
@@ -66,7 +65,7 @@ class BME680:
             logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        logging.info('Publishing signal for humidity data')
+        logging.info('Broadcasting humidity: {}'.format(humidity))
         humidity_signal = signal('humidity')
         humidity_signal.send(self, humidity=humidity, mqtt_topic=mqtt_details['topic'])
 
@@ -89,7 +88,7 @@ class BME680:
             logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
-        logging.info('Publishing signal for pressure data')
+        logging.info('Broadcasting pressure: {}'.format(pressure))
         pressure_signal = signal('pressure')
         pressure_signal.send(self, pressure=pressure, mqtt_topic=mqtt_details['topic'])
 
@@ -101,9 +100,9 @@ class BME680:
         :return:
         """
         logging.debug('Measuring air quality')
-        if self._calculating_air_quality_baseline:
-            logging.info('Sensor is currently calculating the air quality baseline')
-            return
+        if self._air_quality_baseline_calculated is False:
+            logging.info('Sensor has no air quality baseline, calculating now')
+            self._calculate_air_quality_baseline()
 
         self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
         self._sensor.set_gas_heater_temperature(320)
@@ -143,7 +142,7 @@ class BME680:
             time.sleep(0.5)
 
         self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
-        logging.info('Publishing signal for air quality data')
+        logging.info('Broadcasting air quality: {}'.format(air_quality))
         air_quality_signal = signal('air_quality')
         air_quality_signal.send(self, air_quality=air_quality, mqtt_topic=mqtt_details['topic'])
 
@@ -154,7 +153,6 @@ class BME680:
         :return:
         """
         logging.debug('Calculating air quality baseline')
-        self._calculating_air_quality_baseline = True
         self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
         self._sensor.set_gas_heater_temperature(320)
         self._sensor.set_gas_heater_duration(150)
@@ -173,5 +171,6 @@ class BME680:
                 time.sleep(1)
 
         self._gas_baseline = sum(burn_in_data[-50:]) / 50.0
-        self._calculating_air_quality_baseline = False
+        logging.info('Air quality baseline calculated: {}'.format(self._gas_baseline))
+        self._air_quality_baseline_calculated = True
         self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
