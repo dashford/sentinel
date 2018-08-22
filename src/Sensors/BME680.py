@@ -115,18 +115,22 @@ class BME680:
         hum_baseline = 40.0
         hum_weighting = 0.25
 
-        burn_in_count = 10
+        start_time = time.time()
+        current_time = time.time()
+        burn_in_time = 10
         burn_in_data = []
 
-        while len(burn_in_data) < burn_in_count:
+        while current_time - start_time < burn_in_time:
+            current_time = time.time()
             if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
-                gas = self._sensor.data.gas_resistance
-                burn_in_data.append(gas)
+                burn_in_data.append(self._sensor.data.gas_resistance)
                 time.sleep(1)
 
+        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
+
         while pending_measurement and pending_count < 15:
-            if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
-                gas = sum(burn_in_data[-10:]) / len(burn_in_data)
+            if self._sensor.get_sensor_data():
+                gas = sum(burn_in_data) / len(burn_in_data)
                 gas_offset = self._gas_baseline - gas
 
                 hum = self._sensor.data.humidity
@@ -152,7 +156,6 @@ class BME680:
             pending_count = pending_count + 1
             time.sleep(0.5)
 
-        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
         logging.info('Broadcasting air quality: {}'.format(air_quality))
         air_quality_signal = signal('air_quality')
         air_quality_signal.send(self, air_quality=air_quality, mqtt_topic=mqtt_details['topic'])
@@ -171,7 +174,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        burn_in_time = 300
+        burn_in_time = 60
         burn_in_data = []
 
         while current_time - start_time < burn_in_time:
