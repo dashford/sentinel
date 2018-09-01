@@ -17,7 +17,6 @@ class BME680:
 
         self._air_quality_baseline_calculated = False
         self._gas_baseline = None
-        self._measuring_air_quality = False
         self._sensor = bme680.BME680(i2c_addr=address)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
         self._sensor.set_pressure_oversample(bme680.OS_4X)
@@ -35,7 +34,7 @@ class BME680:
         pending_measurement = True
         temperature = None
 
-        if self._measuring_air_quality:
+        if self._sensor.get_gas_status():
             logging.info('Air quality is currently being measured, skipping temperature measurement')
             return
 
@@ -62,7 +61,7 @@ class BME680:
         pending_measurement = True
         humidity = None
 
-        if self._measuring_air_quality:
+        if self._sensor.get_gas_status():
             logging.info('Air quality is currently being measured, skipping humidity measurement')
             return
 
@@ -109,7 +108,6 @@ class BME680:
         :return:
         """
         logging.debug('Measuring air quality')
-        self._measuring_air_quality = True
         if self._air_quality_baseline_calculated is False:
             logging.info('Sensor has no air quality baseline, calculating now')
             self._calculate_air_quality_baseline()
@@ -128,7 +126,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        sample_time = 30
+        sample_time = 45
         sample_data = []
 
         while current_time - start_time < sample_time:
@@ -141,7 +139,7 @@ class BME680:
 
         while pending_measurement and pending_count < 15:
             if self._sensor.get_sensor_data():
-                gas_resistance = sum(sample_data[-10:]) / 10.0
+                gas_resistance = sum(sample_data[-20:]) / 20.0
                 gas_offset = self._gas_baseline - gas_resistance
 
                 hum = self._sensor.data.humidity
@@ -167,7 +165,6 @@ class BME680:
             pending_count = pending_count + 1
             time.sleep(0.5)
 
-        self._measuring_air_quality = False
         logging.info('Broadcasting air quality: {}'.format(air_quality))
         air_quality_signal = signal('air_quality')
         air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance, mqtt_topic=mqtt_details['topic'])
