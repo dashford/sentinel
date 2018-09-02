@@ -18,6 +18,7 @@ class BME680:
         self._air_quality_baseline_calculated = False
         self._gas_baseline = None
         self._sensor = bme680.BME680(i2c_addr=address)
+        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
         self._sensor.set_pressure_oversample(bme680.OS_4X)
         self._sensor.set_temperature_oversample(bme680.OS_8X)
@@ -139,7 +140,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        sample_time = 120
+        sample_time = 10
         sample_data = []
 
         while current_time - start_time < sample_time:
@@ -202,7 +203,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        burn_in_time = 300
+        burn_in_time = 10
         burn_in_data = []
 
         while current_time - start_time < burn_in_time:
