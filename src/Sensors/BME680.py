@@ -5,6 +5,11 @@ from blinker import signal
 
 
 class BME680:
+
+    BURN_IN_TIME_IN_SECONDS = 300
+    AIR_QUALITY_SAMPLE_TIME_IN_SECONDS = 60
+    COOL_DOWN_TEMPERATURE_DIFFERENCE = 0.25
+
     def __init__(self, address):
         logging.info('Initialising BME680 sensor with address {}'.format(address))
 
@@ -140,10 +145,9 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        sample_time = 10
         sample_data = []
 
-        while current_time - start_time < sample_time:
+        while current_time - start_time < BME680.AIR_QUALITY_SAMPLE_TIME_IN_SECONDS:
             current_time = time.time()
             if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
                 sample_data.append(self._sensor.data.gas_resistance)
@@ -187,7 +191,7 @@ class BME680:
         cooling = True
         while cooling:
             if self._sensor.get_sensor_data():
-                if self._sensor.data.temperature <= initial_temperature + 0.25 or initial_temperature is None:
+                if self._sensor.data.temperature <= initial_temperature + BME680.COOL_DOWN_TEMPERATURE_DIFFERENCE or initial_temperature is None:
                     cooling = False
                     logging.debug('Sensor has cooled down sufficiently')
             logging.debug('Sensor data not ready yet, will try again...')
@@ -203,10 +207,9 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        burn_in_time = 10
         burn_in_data = []
 
-        while current_time - start_time < burn_in_time:
+        while current_time - start_time < BME680.BURN_IN_TIME_IN_SECONDS:
             current_time = time.time()
             if self._sensor.get_sensor_data() and self._sensor.data.heat_stable:
                 gas = self._sensor.data.gas_resistance
