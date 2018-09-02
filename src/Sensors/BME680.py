@@ -108,14 +108,27 @@ class BME680:
         :return:
         """
         logging.debug('Measuring air quality')
-        if self._air_quality_baseline_calculated is False:
-            logging.info('Sensor has no air quality baseline, calculating now')
-            self._calculate_air_quality_baseline()
+
+        initial_temperature = None
+
+        logging.debug('Measuring initial temperature and humidity readings')
+        pending_measurement = True
+        while pending_measurement:
+            if self._sensor.get_sensor_data():
+                initial_temperature = self._sensor.data.temperature
+                pending_measurement = False
+                logging.info('Temperature, Humidity received from sensor: {}, {}'.format(initial_temperature, initial_humidity))
+            logging.debug('Sensor data not ready yet, will try again...')
+            time.sleep(0.5)
 
         self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
         self._sensor.set_gas_heater_temperature(320)
         self._sensor.set_gas_heater_duration(150)
         self._sensor.select_gas_heater_profile(0)
+
+        if self._air_quality_baseline_calculated is False:
+            logging.info('Sensor has no air quality baseline, calculating now')
+            self._calculate_air_quality_baseline()
 
         pending_measurement = True
         pending_count = 0
@@ -126,7 +139,7 @@ class BME680:
 
         start_time = time.time()
         current_time = time.time()
-        sample_time = 45
+        sample_time = 120
         sample_data = []
 
         while current_time - start_time < sample_time:
@@ -139,7 +152,7 @@ class BME680:
 
         while pending_measurement and pending_count < 15:
             if self._sensor.get_sensor_data():
-                gas_resistance = sum(sample_data[-20:]) / 20.0
+                gas_resistance = sum(sample_data[-35:]) / 35.0
                 gas_offset = self._gas_baseline - gas_resistance
 
                 hum = self._sensor.data.humidity
@@ -169,6 +182,16 @@ class BME680:
         air_quality_signal = signal('air_quality')
         air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance, mqtt_topic=mqtt_details['topic'])
 
+        # Allow gas plate to cool down
+        cooling = True
+        while cooling:
+            if self._sensor.get_sensor_data():
+                if self._sensor.data.temperature <= initial_temperature + 0.25 or initial_temperature is None:
+                    cooling = False
+                    logging.debug('Sensor has cooled down sufficiently')
+            logging.debug('Sensor data not ready yet, will try again...')
+            time.sleep(0.5)
+
     def _calculate_air_quality_baseline(self):
         """
         Calculates the current baseline for the air quality sensor on the device.
@@ -176,10 +199,6 @@ class BME680:
         :return:
         """
         logging.debug('Calculating air quality baseline')
-        self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
-        self._sensor.set_gas_heater_temperature(320)
-        self._sensor.set_gas_heater_duration(150)
-        self._sensor.select_gas_heater_profile(0)
 
         start_time = time.time()
         current_time = time.time()
@@ -196,4 +215,3 @@ class BME680:
         self._gas_baseline = sum(burn_in_data[-50:]) / 50.0
         logging.info('Air quality baseline calculated: {}'.format(self._gas_baseline))
         self._air_quality_baseline_calculated = True
-        self._sensor.set_gas_status(bme680.DISABLE_GAS_MEAS)
