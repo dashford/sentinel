@@ -118,7 +118,7 @@ class BME680:
             if self._sensor.get_sensor_data():
                 initial_temperature = self._sensor.data.temperature
                 pending_measurement = False
-                logging.info('Temperature, Humidity received from sensor: {}, {}'.format(initial_temperature, initial_humidity))
+                logging.info('Temperature received from sensor: {}'.format(initial_temperature))
             logging.debug('Sensor data not ready yet, will try again...')
             time.sleep(0.5)
 
