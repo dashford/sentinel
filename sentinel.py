@@ -9,28 +9,43 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv, find_dotenv
 from blinker import signal
 
-from src.MQTT.Factory import Factory
+from src.MQTT.Factory import Factory as MQTTFactory
 from src.Notification.NotificationManager import NotificationManager
 from src.Sensors.Factory import Factory as Device_Factory
 from src.Values.Credentials import Credentials
-from src.Signals.Subscribers.MQTT import MQTT as MQTTSubscriber
+from src.Signals.Subscribers.MQTT import MQTT as MQTTSignalSubscriber
 
-if __name__ == '__main__':
-    # TODO decide on format
+
+def _initialise_logging():
     log_format = '%(levelname)s | %(name)s | %(asctime)s | %(message)s'
     logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
 
+
+def _load_env():
     load_dotenv(find_dotenv())
-    with open('config.yaml') as fp:
-        configuration = yaml.load(fp)
 
-    mqtt_client = Factory.create_client(
+
+def _load_configuration():
+    with open('config.yaml') as file:
+        return yaml.load(file)
+
+
+if __name__ == '__main__':
+    _initialise_logging()
+    _load_env()
+    configuration = _load_configuration()
+
+    mqtt_client = MQTTFactory.create_client(
         provider=os.getenv('MQTT_PROVIDER'),
-        credentials=Credentials(username=os.getenv('MQTT_USERNAME'), password=os.getenv('MQTT_PASSWORD'))
+        client_id=os.getenv('MQTT_CLIENT_ID'),
+        credentials=Credentials(
+            username=os.getenv('MQTT_USERNAME'),
+            password=os.getenv('MQTT_PASSWORD')
+        )
     )
-    mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=int(os.getenv('MQTT_PORT')))
+    mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=os.getenv('MQTT_PORT'))
 
-    mqtt_signal_subscriber = MQTTSubscriber(mqtt_client=mqtt_client)
+    mqtt_signal_subscriber = MQTTSignalSubscriber(mqtt_client=mqtt_client)
 
     temperature_signal = signal('temperature')
     humidity_signal = signal('humidity')
@@ -101,3 +116,10 @@ if __name__ == '__main__':
         mqtt_client.loop_stop()
     finally:
         GPIO.cleanup()
+
+
+# TODO:
+# use click library for CLI interaction
+# fix logging name
+# pass logging level as ENV parameter
+# marshmallow to validate configuration

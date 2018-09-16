@@ -14,7 +14,7 @@ class Paho:
 
     def connect(self, host, port=1883, keepalive=60, bind_address=""):
         logging.info('Connecting to broker on {}:{}'.format(host, port))
-        self._client.connect(host=host, port=port, keepalive=keepalive, bind_address=bind_address)
+        self._client.connect(host=host, port=int(port), keepalive=keepalive, bind_address=bind_address)
 
     def publish(self, topic, payload=None, qos=0, retain=False):
         logging.info('Publishing message to topic {}'.format(topic))
