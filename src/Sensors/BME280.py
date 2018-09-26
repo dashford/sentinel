@@ -45,7 +45,7 @@ class BME280:
         :return:
         """
         logging.debug('Measuring pressure')
-        pressure = self._sensor.read_pressure()
+        pressure = self._sensor.read_pressure() / 100.0
         logging.info('Broadcasting pressure: {}'.format(pressure))
 
         pressure_signal = signal('pressure')
