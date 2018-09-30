@@ -2,7 +2,7 @@
 
 *This project is under early development, breaking changes may occur at any time*
 
-Sentinel is an open source project for collecting sensor and publishing sensor data to an MQTT
+Sentinel is an open source project for collecting and publishing sensor data to an MQTT
 broker. See the list of currently supported sensors.
 
 Currently this project was developed to run on a Raspberry Pi Zero with sensors connected via
@@ -42,7 +42,7 @@ $ git clone git@github.com:dashford/sentinel.git
 
 ```
 $ cp .env.example .env
-$ cp config.example.yaml
+$ cp config.example.yaml config.yaml
 ```
 
 - Activate the virtual environment and run the application
