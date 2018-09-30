@@ -45,8 +45,17 @@ class BME280:
         :return:
         """
         logging.debug('Measuring pressure')
-        pressure = self._sensor.read_pressure() / 100.0
+        pressure = self._convert_to_hectopascals(pressure=self._sensor.read_pressure())
         logging.info('Broadcasting pressure: {}'.format(pressure))
 
         pressure_signal = signal('pressure')
         pressure_signal.send(self, pressure=pressure, mqtt_topic=mqtt_details['topic'])
+
+    def _convert_to_hectopascals(self, pressure):
+        """
+        Converts pressure to hectopascals
+
+        :param float pressure:
+        :return float:
+        """
+        return pressure / 100.0
