@@ -10,9 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 from blinker import signal
 
 from src.MQTT.Factory import Factory as MQTTFactory
-from src.Notification.NotificationManager import NotificationManager
 from src.Devices.Sensors.Factory import Factory as Sensor_Factory
-from src.Devices.LEDs.Factory import Factory as LED_Factory
 from src.Values.Credentials import Credentials
 from src.Signals.Subscribers.MQTT import MQTT as MQTTSignalSubscriber
 
@@ -57,17 +55,6 @@ if __name__ == '__main__':
     humidity_signal.connect(mqtt_signal_subscriber.notify)
     pressure_signal.connect(mqtt_signal_subscriber.notify)
     air_quality_signal.connect(mqtt_signal_subscriber.notify)
-
-    if 'leds' in configuration:
-        leds = {}
-        for index, led in enumerate(configuration['leds']):
-            leds[index] = LED_Factory.create_led(
-                device=led['type'],
-                configuration=led,
-                notification_manager=NotificationManager(configuration=led['notifications'])
-            )
-            for topic in led['mqtt']['topics']:
-                mqtt_client.message_callback_add(subscription=topic['topic'], callback=leds[index].notify)
 
     mqtt_client.subscribe(topic='brompton/#')
 

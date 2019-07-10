@@ -54,37 +54,3 @@ sensors:
         poll: 20
         mqtt:
           topic: brompton/living-room-four/temperature
-
-leds:
-  - type: rgb
-    id: 1
-    active: true
-    channels:
-      r: 23
-      g: 25
-      b: 24
-    notifications:
-      allow:
-        - after_sunrise
-      deny:
-        - after_sunset
-    mqtt:
-      topics:
-        - topic: brompton/living-room/temperature
-          colour:
-            red: 0
-            green: 255
-            blue: 0
-          style: flash
-        - topic: brompton/living-room/humidity
-          colour:
-            red: 0
-            green: 255
-            blue: 0
-          style: flash
-        - topic: brompton/living-room/pressure
-          colour:
-            red: 0
-            green: 0
-            blue: 255
-          style: flash
