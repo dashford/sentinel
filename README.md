@@ -72,6 +72,13 @@ sudo raspi-config nonint set_config_var enable_uart 1 /boot/config.txt
 
 Add the line `dtoverlay=pi3-miniuart-bt` to your `/boot/config.txt`
 
+#### LTR-559
+
+```
+sudo apt-get install python-smbus # possibly not needed
+pip install smbus
+```
+
 ## TODO
 
 - Validate and update dockerfile
