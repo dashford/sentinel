@@ -61,6 +61,17 @@ See `config.example.yaml` for more examples.
 
 Other configuration details are defined in the `.env` file.
 
+### Sensor Configuration
+
+#### PMS5003
+
+```
+sudo raspi-config nonint do_serial 1
+sudo raspi-config nonint set_config_var enable_uart 1 /boot/config.txt
+```
+
+Add the line `dtoverlay=pi3-miniuart-bt` to your `/boot/config.txt`
+
 ## TODO
 
 - Validate and update dockerfile
