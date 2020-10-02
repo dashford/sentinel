@@ -50,11 +50,13 @@ if __name__ == '__main__':
     humidity_signal = signal('humidity')
     pressure_signal = signal('pressure')
     air_quality_signal = signal('air_quality')
+    lux_signal = signal('lux')
 
     temperature_signal.connect(mqtt_signal_subscriber.notify)
     humidity_signal.connect(mqtt_signal_subscriber.notify)
     pressure_signal.connect(mqtt_signal_subscriber.notify)
     air_quality_signal.connect(mqtt_signal_subscriber.notify)
+    lux_signal.connect(mqtt_signal_subscriber.notify)
 
     mqtt_client.subscribe(topic='brompton/#')
 
@@ -88,6 +90,13 @@ if __name__ == '__main__':
             elif metric['metric'] == 'air_quality':
                 scheduler.add_job(
                     device.get_air_quality,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[metric['mqtt']]
+                )
+            elif metric['metric'] == 'lux':
+                scheduler.add_job(
+                    device.get_lux,
                     'interval',
                     seconds=metric['poll'],
                     args=[metric['mqtt']]

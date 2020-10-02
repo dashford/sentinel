@@ -1,7 +1,8 @@
 from src.Devices.Sensors.BME280 import BME280
 from src.Devices.Sensors.BME680 import BME680
-from src.Devices.Sensors.DS18B20 import DS18B20
 from src.Devices.Sensors.CCS811 import CCS811
+from src.Devices.Sensors.DS18B20 import DS18B20
+from src.Devices.Sensors.LTR559 import LTR559
 
 
 class Factory:
@@ -16,3 +17,5 @@ class Factory:
             return DS18B20(address=address)
         elif device == 'CCS811':
             return CCS811(address=address)
+        elif device == 'LTR559':
+            return LTR559(address=address)
