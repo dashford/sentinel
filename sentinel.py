@@ -101,6 +101,27 @@ if __name__ == '__main__':
                     seconds=metric['poll'],
                     args=[metric['mqtt']]
                 )
+            elif metric['metric'] == 'pm1.0':
+                scheduler.add_job(
+                    device.get_pm_1_0_ug_m3,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[metric['mqtt']]
+                )
+            elif metric['metric'] == 'pm2.5':
+                scheduler.add_job(
+                    device.get_pm_2_5_ug_m3,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[metric['mqtt']]
+                )
+            elif metric['metric'] == 'pm10.0':
+                scheduler.add_job(
+                    device.get_pm_10_ug_m3,
+                    'interval',
+                    seconds=metric['poll'],
+                    args=[metric['mqtt']]
+                )
 
     mqtt_client.loop_start()
     scheduler.start()

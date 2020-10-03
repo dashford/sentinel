@@ -13,3 +13,4 @@ pytest
 Adafruit_CCS811==0.1
 blinker==1.4
 ltr559==0.1.1
+pms5003==0.0.5

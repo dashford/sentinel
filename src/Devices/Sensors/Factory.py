@@ -3,6 +3,7 @@ from src.Devices.Sensors.BME680 import BME680
 from src.Devices.Sensors.CCS811 import CCS811
 from src.Devices.Sensors.DS18B20 import DS18B20
 from src.Devices.Sensors.LTR559 import LTR559
+from src.Devices.Sensors.PMS5003 import PMS5003
 
 
 class Factory:
@@ -19,3 +20,5 @@ class Factory:
             return CCS811(address=address)
         elif device == 'LTR559':
             return LTR559(address=address)
+        elif device == 'PMS5003':
+            return PMS5003(address=address)
