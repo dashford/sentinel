@@ -51,12 +51,18 @@ if __name__ == '__main__':
     pressure_signal = signal('pressure')
     air_quality_signal = signal('air_quality')
     lux_signal = signal('lux')
+    particulate_matter_1_0_signal = signal('pm1.0_ug/m3')
+    particulate_matter_2_5_signal = signal('pm2.5_ug/m3')
+    particulate_matter_10_0_signal = signal('pm10.0_ug/m3')
 
     temperature_signal.connect(mqtt_signal_subscriber.notify)
     humidity_signal.connect(mqtt_signal_subscriber.notify)
     pressure_signal.connect(mqtt_signal_subscriber.notify)
     air_quality_signal.connect(mqtt_signal_subscriber.notify)
     lux_signal.connect(mqtt_signal_subscriber.notify)
+    particulate_matter_1_0_signal.connect(mqtt_signal_subscriber.notify)
+    particulate_matter_2_5_signal.connect(mqtt_signal_subscriber.notify)
+    particulate_matter_10_0_signal.connect(mqtt_signal_subscriber.notify)
 
     # mqtt_client.subscribe(topic='brompton/#')
 
