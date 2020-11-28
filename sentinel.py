@@ -58,7 +58,7 @@ if __name__ == '__main__':
     air_quality_signal.connect(mqtt_signal_subscriber.notify)
     lux_signal.connect(mqtt_signal_subscriber.notify)
 
-    mqtt_client.subscribe(topic='brompton/#')
+    # mqtt_client.subscribe(topic='brompton/#')
 
     scheduler = BackgroundScheduler()
 
