@@ -7,7 +7,6 @@ APScheduler==3.5.1
 bme680==1.0.5
 RPi.GPIO==0.6.3
 astral==1.6.1
-git+https://github.com/palto42/SunriseSunsetCalculator.git
 RPIO==0.10.0
 pytest
 Adafruit_CCS811==0.1
