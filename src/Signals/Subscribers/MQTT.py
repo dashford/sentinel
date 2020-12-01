@@ -1,12 +1,13 @@
-import logging
 from src.MQTT.Message.Message import Message
 from src.MQTT.Message.Formatters.JsonFormatter import JsonFormatter
 
 
 class MQTT:
-    def __init__(self, mqtt_client):
-        logging.debug('Initialising MQTT signal subscriber')
+    def __init__(self, logger, mqtt_client, publish_topic):
         self._mqtt_client = mqtt_client
+        self._publish_topic = publish_topic
+        self._logger = logger
+        self._logger.debug('Initialising MQTT signal subscriber')
 
     def notify(self, sender=None, **kwargs):
         message = Message()
