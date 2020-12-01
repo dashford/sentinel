@@ -16,4 +16,8 @@ class MQTT:
         for key, value in kwargs.items():
             message.add_key_value(key=key, value=value)
 
-        self._mqtt_client.publish(self._publish_topic + kwargs['mqtt_topic_additons'], message_formatter.format(message=message.get_message()))
+        topic = self._publish_topic
+        if kwargs['mqtt_topic_additons']:
+            topic = self._publish_topic + kwargs['mqtt_topic_additons']
+
+        self._mqtt_client.publish(topic, message_formatter.format(message=message.get_message()))
