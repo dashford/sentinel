@@ -18,6 +18,7 @@ from src.Signals.Subscribers.MQTT import MQTT as MQTTSignalSubscriber
 def _initialise_logging():
     log_format = '%(levelname)s | %(name)s | %(asctime)s | %(message)s'
     logging.basicConfig(stream=sys.stdout, format=log_format, level=logging.DEBUG)
+    return logging.getLogger('sentinel')
 
 
 def _load_env():
@@ -30,7 +31,7 @@ def _load_configuration():
 
 
 if __name__ == '__main__':
-    _initialise_logging()
+    logger = _initialise_logging()
     _load_env()
     configuration = _load_configuration()
 
@@ -44,34 +45,26 @@ if __name__ == '__main__':
     )
     mqtt_client.connect(host=os.getenv('MQTT_HOST'), port=os.getenv('MQTT_PORT'))
 
-    mqtt_signal_subscriber = MQTTSignalSubscriber(mqtt_client=mqtt_client)
-
-    temperature_signal = signal('temperature')
-    humidity_signal = signal('humidity')
-    pressure_signal = signal('pressure')
-    air_quality_signal = signal('air_quality')
-    lux_signal = signal('lux')
-    particulate_matter_1_0_signal = signal('pm1.0_ug/m3')
-    particulate_matter_2_5_signal = signal('pm2.5_ug/m3')
-    particulate_matter_10_0_signal = signal('pm10.0_ug/m3')
-
-    temperature_signal.connect(mqtt_signal_subscriber.notify)
-    humidity_signal.connect(mqtt_signal_subscriber.notify)
-    pressure_signal.connect(mqtt_signal_subscriber.notify)
-    air_quality_signal.connect(mqtt_signal_subscriber.notify)
-    lux_signal.connect(mqtt_signal_subscriber.notify)
-    particulate_matter_1_0_signal.connect(mqtt_signal_subscriber.notify)
-    particulate_matter_2_5_signal.connect(mqtt_signal_subscriber.notify)
-    particulate_matter_10_0_signal.connect(mqtt_signal_subscriber.notify)
-
-    # mqtt_client.subscribe(topic='brompton/#')
-
     scheduler = BackgroundScheduler()
+
+    broadcasts = []
+    signal_subscribers = []
 
     for sensor in configuration['sensors']:
         device = Sensor_Factory.create_sensor(device=sensor['type'], address=sensor['address'])
-        # TODO come up with better way to add these jobs
         for metric in sensor['metrics']:
+            mqtt_signal_subscriber = MQTTSignalSubscriber(
+                logger=logger,
+                mqtt_client=mqtt_client,
+                publish_topic=metric['mqtt']['topic']
+            )
+
+            broadcast = signal(metric['metric'])
+            broadcast.connect(mqtt_signal_subscriber.notify, sender=device)
+
+            signal_subscribers.append(mqtt_signal_subscriber)
+            broadcasts.append(broadcast)
+
             if metric['metric'] == 'temperature':
                 scheduler.add_job(
                     device.get_temperature,
