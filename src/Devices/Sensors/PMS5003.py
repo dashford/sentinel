@@ -10,11 +10,10 @@ class PMS5003:
         logging.info('Initialising PMS5003 sensor with address {}'.format(address))
         self._sensor = pms5003.PMS5003(device=address)
 
-    def get_particulate_matter(self, mqtt_details):
+    def get_particulate_matter(self):
         """
         Return measured PM1.0 ug/m3 from the sensor.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring particulate matter')
@@ -34,12 +33,12 @@ class PMS5003:
 
         logging.info('Broadcasting pm1.0_ug/m3: {}'.format(avg_1_0))
         pm1_0_signal = signal('pm1.0_ug/m3')
-        pm1_0_signal.send(self, pm=avg_1_0, mqtt_topic=mqtt_details['topic'] + '/1.0')
+        pm1_0_signal.send(self, pm=avg_1_0, mqtt_topic_additons='/1.0')
 
         logging.info('Broadcasting pm2.5_ug/m3: {}'.format(avg_2_5))
         pm2_5_signal = signal('pm2.5_ug/m3')
-        pm2_5_signal.send(self, pm=avg_2_5, mqtt_topic=mqtt_details['topic'] + '/2.5')
+        pm2_5_signal.send(self, pm=avg_2_5, mqtt_topic_additons='/2.5')
 
         logging.info('Broadcasting pm10.0_ug/m3: {}'.format(avg_10_0))
         pm10_0_signal = signal('pm10.0_ug/m3')
-        pm10_0_signal.send(self, pm=avg_10_0, mqtt_topic=mqtt_details['topic'] + '/10.0')
+        pm10_0_signal.send(self, pm=avg_10_0, mqtt_topic_additons='/10.0')

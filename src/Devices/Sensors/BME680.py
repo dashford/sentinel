@@ -29,11 +29,10 @@ class BME680:
         self._sensor.set_temperature_oversample(bme680.OS_8X)
         self._sensor.set_filter(bme680.FILTER_SIZE_3)
 
-    def get_temperature(self, mqtt_details):
+    def get_temperature(self):
         """
         Return measured temperature from the device.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring temperature')
@@ -54,13 +53,12 @@ class BME680:
 
         logging.info('Broadcasting temperature: {}'.format(temperature))
         temperature_signal = signal('temperature')
-        temperature_signal.send(self, temperature=temperature, mqtt_topic=mqtt_details['topic'])
+        temperature_signal.send(self, temperature=temperature)
 
-    def get_humidity(self, mqtt_details):
+    def get_humidity(self):
         """
         Return measured humidity from the device.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring humidity')
@@ -81,13 +79,12 @@ class BME680:
 
         logging.info('Broadcasting humidity: {}'.format(humidity))
         humidity_signal = signal('humidity')
-        humidity_signal.send(self, humidity=humidity, mqtt_topic=mqtt_details['topic'])
+        humidity_signal.send(self, humidity=humidity)
 
-    def get_pressure(self, mqtt_details):
+    def get_pressure(self):
         """
         Return measured pressure from the device.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring pressure')
@@ -104,13 +101,12 @@ class BME680:
 
         logging.info('Broadcasting pressure: {}'.format(pressure))
         pressure_signal = signal('pressure')
-        pressure_signal.send(self, pressure=pressure, mqtt_topic=mqtt_details['topic'])
+        pressure_signal.send(self, pressure=pressure)
 
-    def get_air_quality(self, mqtt_details):
+    def get_air_quality(self):
         """
         Return measured air quality from the device.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring air quality')
@@ -185,7 +181,7 @@ class BME680:
 
         logging.info('Broadcasting air quality: {}'.format(air_quality))
         air_quality_signal = signal('air_quality')
-        air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance, mqtt_topic=mqtt_details['topic'])
+        air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance)
 
         # Allow gas plate to cool down
         cooling = True

@@ -11,11 +11,9 @@ class DS18B20:
         self._address = address
         self._sensor = Sensor(sensor_id=address)
 
-    def get_temperature(self, mqtt_details):
+    def get_temperature(self):
         """
         Return measured temperature from the sensor.
-
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring temperature')
@@ -26,8 +24,7 @@ class DS18B20:
         temperature_signal.send(
             self,
             temperature=temperature,
-            address=self._address,
-            mqtt_topic=mqtt_details['topic']
+            address=self._address
         )
 
 

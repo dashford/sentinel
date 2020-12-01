@@ -9,11 +9,10 @@ class LTR559:
         logging.info('Initialising LTR559 sensor with address {}'.format(address))
         self._sensor = ltr559.LTR559()
 
-    def get_lux(self, mqtt_details):
+    def get_lux(self):
         """
         Return measured lux from the sensor.
 
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         :return:
         """
         logging.debug('Measuring lux')
@@ -21,4 +20,4 @@ class LTR559:
         logging.info('Broadcasting lux: {}'.format(lux))
 
         lux_signal = signal('lux')
-        lux_signal.send(self, lux=lux, mqtt_topic=mqtt_details['topic'])
+        lux_signal.send(self, lux=lux)

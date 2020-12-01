@@ -17,11 +17,9 @@ class CCS811:
         logging.debug('Initialising CCS811 sensor with address {}'.format(address))
         self._sensor = Adafruit_CCS811(address=address)
 
-    def get_equivalent_co2(self, mqtt_details):
+    def get_equivalent_co2(self):
         """
         Return measured equivalent carbon dioxide from the device.
-
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         """
         logging.debug('Measuring equivalent CO2')
         eco2 = None
@@ -37,13 +35,11 @@ class CCS811:
 
         logging.info('Broadcasting eCO2: {}'.format(eco2))
         eco2_signal = signal('eco2')
-        eco2_signal.send(self, eco2=eco2, mqtt_topic=mqtt_details['topic'])
+        eco2_signal.send(self, eco2=eco2)
 
-    def get_air_quality(self, mqtt_details):
+    def get_air_quality(self):
         """
         Return measured air quality from the device.
-
-        :param dict mqtt_details: Relevant details for publishing to the MQTT broker
         """
         logging.debug('Measuring air quality')
 
@@ -75,7 +71,7 @@ class CCS811:
         logging.info('Air quality received from sensor: {}'.format(air_quality))
         logging.info('Broadcasting air quality: {}'.format(air_quality))
         air_quality_signal = signal('air_quality')
-        air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance, mqtt_topic=mqtt_details['topic'])
+        air_quality_signal.send(self, air_quality=air_quality, gas=gas_resistance)
 
     def _calculate_air_quality_baseline(self):
         """
