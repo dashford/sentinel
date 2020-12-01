@@ -23,9 +23,9 @@ class PMS5003:
         pm10_0 = []
         for x in range(0, 15):
             data = self._sensor.read()
-            pm1_0.append(data.pm_ug_per_m3(size=1.0, atmospheric_environment=True))
-            pm2_5.append(data.pm_ug_per_m3(size=2.5, atmospheric_environment=True))
-            pm10_0.append(data.pm_ug_per_m3(size=None, atmospheric_environment=True))
+            pm1_0.append(data.pm_ug_per_m3(size=1.0, atmospheric_environment=False))
+            pm2_5.append(data.pm_ug_per_m3(size=2.5, atmospheric_environment=False))
+            pm10_0.append(data.pm_ug_per_m3(size=None, atmospheric_environment=False))
             sleep(1)
 
         avg_1_0 = sum(pm1_0) / len(pm1_0)
