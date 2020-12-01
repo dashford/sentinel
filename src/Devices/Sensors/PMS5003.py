@@ -32,13 +32,13 @@ class PMS5003:
         avg_10_0 = sum(pm10_0) / len(pm10_0)
 
         logging.info('Broadcasting pm1.0_ug/m3: {}'.format(avg_1_0))
-        pm1_0_signal = signal('pm1.0_ug/m3')
+        pm1_0_signal = signal('particulate_matter')
         pm1_0_signal.send(self, pm=avg_1_0, mqtt_topic_additons='/1.0')
 
         logging.info('Broadcasting pm2.5_ug/m3: {}'.format(avg_2_5))
-        pm2_5_signal = signal('pm2.5_ug/m3')
+        pm2_5_signal = signal('particulate_matter')
         pm2_5_signal.send(self, pm=avg_2_5, mqtt_topic_additons='/2.5')
 
         logging.info('Broadcasting pm10.0_ug/m3: {}'.format(avg_10_0))
-        pm10_0_signal = signal('pm10.0_ug/m3')
+        pm10_0_signal = signal('particulate_matter')
         pm10_0_signal.send(self, pm=avg_10_0, mqtt_topic_additons='/10.0')
