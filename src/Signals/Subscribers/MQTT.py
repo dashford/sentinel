@@ -20,4 +20,5 @@ class MQTT:
         if 'mqtt_topic_additons' in kwargs:
             topic = self._publish_topic + kwargs['mqtt_topic_additons']
 
+        self._logger.debug('Publishing on topic {}'.format(topic))
         self._mqtt_client.publish(topic, message_formatter.format(message=message.get_message()))
